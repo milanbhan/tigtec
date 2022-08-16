@@ -1,29 +1,40 @@
-# README #
+# Welcome to the project tigtec
+![](docs/assets/banner.png)
 
-This README would normally document whatever steps are necessary to get your application up and running.
+- **Project name**: tigtec
+- **Library name**: tigtec
+- **Authors**: milanbhan
+- **Description**: token importance guided text counterfactual
 
-### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
+## Project Structure
+```
+- tigtec/ # Your python library
+- data/
+    - raw/
+    - processed/
+- docs/
+- tests/                            # Where goes each unitary test in your folder
+- scripts/                          # Where each automation script will go
+- requirements.txt                  # Where you should put the libraries version used in your library
+```
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
 
-### Contribution guidelines ###
+## Branch strategy
+TBD
 
-* Writing tests
-* Code review
-* Other guidelines
 
-### Who do I talk to? ###
+## Ethics checklist
+TBD
 
-* Repo owner or admin
-* Other community or team contact
+
+
+## Starter package
+This project has been created using the Ekimetrics Python Starter Package to enforce best coding practices, reusability and industrialization. <br>
+If you have any questions please reach out to the inno team and [Théo Alves Da Costa](mailto:theo.alvesdacosta@ekimetrics.com)
+
+
+
+
+

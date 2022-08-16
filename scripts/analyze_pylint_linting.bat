@@ -1,0 +1,5 @@
+cd ..
+
+pylint tigtec
+
+pause
