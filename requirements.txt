@@ -3,6 +3,9 @@ pandas
 numpy
 streamlit>=0.70.0
 plotly
+tensorflow
+transformers
+shap
 
 # Starter package library
 cookiecutter
