@@ -224,7 +224,7 @@ def set_seed(seed_value=42):
     torch.manual_seed(seed_value)
     torch.cuda.manual_seed_all(seed_value)
 
-def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, epochs=4, evaluation=False, loss_fn = nn.CrossEntropy()):
+def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, epochs=4, evaluation=False, loss_fn = nn.CrossEntropyLoss()):
     """Train the BertClassifier model.
     """
     # Start training loop
