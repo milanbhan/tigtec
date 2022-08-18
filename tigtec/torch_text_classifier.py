@@ -224,7 +224,7 @@ def set_seed(seed_value=42):
     torch.manual_seed(seed_value)
     torch.cuda.manual_seed_all(seed_value)
 
-def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, epochs=4, evaluation=False, loss_fn = nn.CrossEntropyLoss()):
+def train(model, train_dataloader, optimizer, scheduler, test_dataloader=None, epochs=4, evaluation=False, loss_fn = nn.CrossEntropyLoss()):
     """Train the BertClassifier model.
     """
     # Start training loop
@@ -296,7 +296,7 @@ def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, ep
         if evaluation == True:
             # After the completion of each training epoch, measure the model's performance
             # on our validation set.
-            val_loss, val_accuracy = evaluate(model, val_dataloader)
+            val_loss, val_accuracy = evaluate(model, test_dataloader)
 
             # Print performance over the entire training data
             time_elapsed = time.time() - t0_epoch
