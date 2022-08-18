@@ -245,7 +245,7 @@ def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, ep
 
         # Put the model into the training mode
         model.train()
-
+        print("so far so good")
         # For each batch of training data...
         for step, batch in enumerate(train_dataloader):
             batch_counts +=1
@@ -268,7 +268,7 @@ def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, ep
 
             # Clip the norm of the gradients to 1.0 to prevent "exploding gradients"
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            print("so fare so good")
+
             # Update parameters and the learning rate
             optimizer.step()
             scheduler.step()
