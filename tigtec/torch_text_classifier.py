@@ -248,7 +248,6 @@ def train(model, train_dataloader, optimizer, scheduler, test_dataloader=None, e
         
         # For each batch of training data...
         for step, batch in enumerate(train_dataloader):
-            print("so far so good")
             batch_counts +=1
             # Load batch to GPU
             b_input_ids, b_attn_mask, b_labels = tuple(t.to(model.device) for t in batch)
