@@ -307,7 +307,7 @@ def train(model, train_dataloader, optimizer, scheduler, val_dataloader=None, ep
     print("Training complete!")
 
 
-def evaluate(model, val_dataloader, loss_fn = nn.CrossEntropy()):
+def evaluate(model, val_dataloader, loss_fn = nn.CrossEntropyLoss()):
     """After the completion of each training epoch, measure the model's performance
     on our validation set.
     """
