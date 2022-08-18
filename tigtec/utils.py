@@ -20,7 +20,6 @@ from transformers import BertTokenizerFast, DistilBertModel, DistilBertTokenizer
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import unidecode
 
 
 
@@ -84,17 +83,6 @@ def remove_multi_space(x:str):
     """
     return " ".join(x.split())
 
-def remove_uni(x:str):
-    """Remove unicode characters from a string
-    For example the accents in French
-
-    Args:
-        x (str): input string to transform
-
-    Returns
-        str - the transformed string
-    """
-    return unidecode.unidecode(x)
 
 def text_to_token(x, nlp, lemmatize = True, stop_words = False):
     if lemmatize:
