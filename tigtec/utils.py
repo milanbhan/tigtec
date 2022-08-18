@@ -3,6 +3,7 @@ import math
 import os
 import pandas as pd
 import numpy as np
+from tqdm.notebook import tqdm
 
 from copy import deepcopy
 import string  
