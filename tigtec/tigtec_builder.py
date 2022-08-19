@@ -178,8 +178,6 @@ class tigtec:
         G_text.add_node(0, text = text_initial_tokenized, hist_mask = [], hist_mask_text = [], attrib_coeff = 1, cost = init_cost, state=init_state, cf = False)
         wait_list = [(0,1)]
         indx=0
-
-
         
         #Premier test : on itère jusqu'à la profondeur max en monde beamsearch
         #   for depth in range(len(text_initial_tokenized)) :
