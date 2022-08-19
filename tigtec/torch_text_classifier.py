@@ -96,6 +96,15 @@ class BertClassifier(nn.Module):
         logits = self.classifier(last_hidden_state_cls)
 
         return logits
+    
+    def predict(self, text, tokenizer=tokenizer) :
+        input, mask = preprocessing_for_bert(text, tokenizer)
+
+        with torch.no_grad():
+                    logits = self(input, mask)
+        probs = F.softmax(logits, dim=1).cpu().numpy()
+        
+        return(probs)
 
 #Target variable encoding
 def categorical_variables(labels):
