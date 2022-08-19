@@ -133,7 +133,7 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
     
-    def attention_token_importane(self, text):
+    def attention_token_importance(self, text):
         input, mask = preprocessing_for_bert(text, self.tokenizer)
         encoded_att = self.bert(input,attention_mask =mask)
         last_attention=encoded_att.attentions[-1]
