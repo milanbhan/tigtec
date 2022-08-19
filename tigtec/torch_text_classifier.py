@@ -256,7 +256,7 @@ class BertClassifier(nn.Module):
 
         return logits
     
-    def plot_attention(self, text, method='attention', n_colors=15) :
+    def plot_token_importance(self, text, method='attention', n_colors=15) :
           
         token_importance = self.compute_token_importance(text=text, method=method)
         
