@@ -52,6 +52,8 @@ class tigtec:
         self.margin = margin
         self.beam_width = beam_width
         self.alpha = alpha
+        
+        self.cf_graph, self.cf_html_list = self.generate_cf_graph()
 
         
 
@@ -244,11 +246,13 @@ class tigtec:
         #Viz cf détectés
         nodes_result = [x for x in G_text.nodes() if G_text.nodes.data()[x]['cf']]
         change_to_plot_html = []
+        cf_list = []
         for r in nodes_result :
         #     compute_attribution(text=cf_review, sentiment_model=sentiment_model, tokenizer=tokenizer, attribution=attribution)
             token_change = attribution_coeff.copy()
             token_change['Attribution coefficient'] = 0
             token_change['token'] = G_text.nodes.data()[r]['text']
+            cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
             cf_token_change = G_text.nodes.data()[r]['hist_mask']
             token_change.iloc[cf_token_change,1]=1
             print(r)
