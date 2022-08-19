@@ -526,8 +526,8 @@ def get_palette(theme="YlOrBr", n_colors=1000):
     pal = sns.color_palette(theme, as_cmap=False, n_colors=n_colors)
 #     pal = sns.color_palette("vlag", as_cmap=True)
     pal = (np.array(pal) * 255).astype(int)
-#     pal = list(map(lambda x: "#%02x%02x%02x" % tuple(x), pal))
-    pal = list(map(pal, lambda x: "#%02x%02x%02x" % tuple(x)))
+    pal = list(map(lambda x: "#%02x%02x%02x" % tuple(x), pal))
+    # pal = list(map(pal, lambda x: "#%02x%02x%02x" % tuple(x)))
     return np.array(pal)
 
 def get_color(word, palette, score = 0.5, n_colors = 1000):
