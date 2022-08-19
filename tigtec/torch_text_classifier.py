@@ -11,7 +11,8 @@ import string
 from sklearn.model_selection import train_test_split
 import seaborn as sns
 import random
-import time  
+import time
+ 
 #NLP/DL librarie
 #Transformers
 import transformers
@@ -25,6 +26,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
+#XAI libraries
+# import shap
+import lime
+from lime.lime_text import LimeTextExplainer
+
+#graph library
+import networkx as nx
 
 
 # Create the BertClassfier class
@@ -76,8 +84,8 @@ class BertClassifier(nn.Module):
             for param in self.bert.parameters():
                 param.requires_grad = False
         
-    def predict(self, text, tokenizer) :
-        input, mask = preprocessing_for_bert(text, tokenizer)
+    def predict(self, text) :
+        input, mask = preprocessing_for_bert(text, self.tokenizer)
 
         with torch.no_grad():
                     logits = self(input, mask)
@@ -85,6 +93,125 @@ class BertClassifier(nn.Module):
         
         return(probs)
     
+    
+    def random_token_importance(self, text):
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103]]
+        token_list_encoded
+        token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
+        random_list = [random.uniform(0, 1) for t in token_list_encoded]
+        sum_random_list = sum(random_list)
+        random_list = [t / sum_random_list for t in random_list ]
+
+        attribution_coefficient = pd.DataFrame(columns = ["token", "Attribution coefficient"])
+        attribution_coefficient['token'] = token_list
+        attribution_coefficient['Attribution coefficient'] = random_list
+        
+        return(attribution_coefficient)
+        
+    def lime_token_importance(self, text):
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [0,101, 102, 103]]
+        token_list_encoded
+        token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
+        text_lime = ' '.join(token_list)
+        text_lime = text_lime.replace(" ##", "")
+        
+        #Declare LIME explainer
+        label_names = ["negative", "positive"]
+        explainer = LimeTextExplainer(class_names=label_names)
+        num_token_compute = int(np.round(len(text_lime.split(" "))/2))
+
+        #Compute lime coeff
+        exp = explainer.explain_instance(text_lime, self.predict, num_features=num_token_compute)
+        
+        #Prepare attribution coeff dataframe
+        tokens_df = pd.DataFrame({"token":text_lime.split(" ")}).reset_index()
+    #       tokens_df = pd.DataFrame({"token":text.split(" ")}).reset_index()
+        lime_coeff = pd.DataFrame(exp.as_list())
+        attribution_coefficient = tokens_df.merge(lime_coeff, how='left', left_on='token', right_on=0).drop(columns=0).rename(columns={1 : "Attribution coefficient"})
+        attribution_coefficient['Attribution coefficient'].loc[attribution_coefficient['Attribution coefficient'].isnull()]=0
+        attribution_coefficient['Attribution coefficient'] = np.abs(attribution_coefficient['Attribution coefficient'])
+        
+        return(attribution_coefficient)
+    
+    def attention_token_importane(self, text):
+        input, mask = preprocessing_for_bert(text, self.tokenizer)
+        encoded_att = self.bert(input,attention_mask =mask)
+        last_attention=encoded_att.attentions[-1]
+
+        tokens,attentions = [], []
+        for head in range(0,12) :
+            for i, elt in enumerate(input[0]):
+                #Ne pas prendre les éléments masqués
+                #!=0 car on ne prend pas les tokens padding
+                if elt.numpy() != 0:
+                    #Sélection du coefficient d'attention associé,
+                    #premier coefficient 0 pour ids1
+                    #Dernier coefficient 0 = indice de l'objet de la classif par défault 
+                    att = last_attention[0,head][0][i].item()
+
+                    tokens.append(self.tokenizer.decode([elt]) + '_' + str(i))
+                    attentions.append(att)
+
+
+        attention_all_head=pd.DataFrame({"Token":tokens,"Attribution coefficient":attentions})
+
+        attention_all_head_mean = attention_all_head.groupby("Token").agg('mean').reset_index()
+        attention_all_head_mean['id'] = attention_all_head_mean['Token'].apply(lambda t : int(t.split("_")[1]))
+        attention_all_head_mean['token'] = attention_all_head_mean['Token'].apply(lambda t : t.split("_")[0])
+        attention_all_head_mean = (attention_all_head_mean.sort_values("id")).reset_index(drop=True)
+        attribution_coefficient = attention_all_head_mean
+        
+        return(attribution_coefficient)
+    
+    def shap_token_importance(self, text):
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103]]
+        token_list_encoded
+        token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
+        text_shap = ' '.join(token_list)
+        text_shap = text_shap.replace(" ##", "")
+
+        def f(review) :
+            val = self.predict(review)[:,1]
+            return val
+
+        # build an explainer using a token masker
+        explainer = shap.Explainer(f, self.tokenizer)
+        shap_values = explainer([text_shap], fixed_context=1)
+        
+        attribution_coefficient = pd.DataFrame(columns = ["token", "Attribution coefficient"])
+        attribution_coefficient["Attribution coefficient"]=np.abs(shap_values.values.tolist()[0])
+    #       attribution_coefficient["token"]=shap_values.data[0].tolist()
+        attribution_coefficient["token"]=[''] + token_list + ['']
+        attribution_coefficient = attribution_coefficient[attribution_coefficient["token"]!='']
+        
+        return(attribution_coefficient)
+    
+    def compute_token_importance(self, text, method:str):
+        if method == 'random' :
+            attribution_coefficient = self.random_token_importance(text)
+        if method == 'lime' :
+            attribution_coefficient = self.lime_token_importance(text)
+        if method == 'attention' :
+            attribution_coefficient = self.attention_token_importance(text) 
+        if method == 'shap' :
+            attribution_coefficient = self.shap_token_importance(text)
+        
+        attribution_coefficient['to_keep']='yes'
+        attribution_coefficient['to_keep'][attribution_coefficient.token.str.startswith("##")]='no'
+    
+        #Regroupement des tokens séparés par le tokenizer, visibles grâce à ##
+        for i in range(attribution_coefficient.shape[0]-1, 0, -1) :
+            if attribution_coefficient.token[i][0:2]=="##" :
+                attribution_coefficient.token[i-1]+=attribution_coefficient.token[i]
+                attribution_coefficient['Attribution coefficient'][i-1]+=attribution_coefficient['Attribution coefficient'][i]
+                
+        attribution_coefficient = attribution_coefficient[attribution_coefficient['to_keep']=='yes']
+        attribution_coefficient.token = attribution_coefficient.token.str.replace("##", "")
+        attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
+        attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
+        
+        return(attribution_coefficient)
+        
     def sentence_embedding_cls(self, text) :
         input, mask = preprocessing_for_bert(text, self.tokenizer)
         encoded_att = self.bert(input,attention_mask=mask, output_hidden_states=True)
