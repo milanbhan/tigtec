@@ -53,10 +53,6 @@ class tigtec:
         self.beam_width = beam_width
         self.alpha = alpha
         
-        self.cf_graph, self.cf_list, self.cf_html_list = self.generate_cf_graph()
-
-        
-
     def mlm_inference(self, masked_text) :
         inputs = self.classifier.tokenizer(masked_text, return_tensors='pt')
   
