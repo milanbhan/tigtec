@@ -170,7 +170,7 @@ class tigtec:
         #   token_list_encoded = [t for t in tokenizer.encode(review[0]) if t not in [101, 102, 103]]
         
         #Initialisation du graph basé sur le text initial
-        attribution_coeff = self.classifier.compute_token_importance(text=cf_review, attribution=self.attribution)
+        attribution_coeff = self.classifier.compute_token_importance(text=cf_review)
         text_initial_tokenized = attribution_coeff['token'].tolist()
         #   text_initial_tokenized = [tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         G_text = nx.DiGraph()
