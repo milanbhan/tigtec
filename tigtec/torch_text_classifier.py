@@ -270,7 +270,7 @@ class BertClassifier(nn.Module):
         #   scores = softmax(scores)
 
         html = color_sentence(sentence, scores, pal, n_colors)
-        displayHTML(html)
+        return(html)
         
     
 
