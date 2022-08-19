@@ -190,6 +190,10 @@ class tigtec:
             predecessor_hist_mask = G_text.nodes.data()[i]['hist_mask']
             predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
             predecessor_text = G_text.nodes.data()[i]['text']
+            
+            if self.explo_strategy == 'evolutive' :
+                attribution_coeff = self.classifier.compute_token_importance(text=' '.join(predecessor_text))
+            
             #On filtre l'attribution en enlevant les tokens déjà masqués/remplacés
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
             #to do : penser au cas de figure avec des attribution égales
