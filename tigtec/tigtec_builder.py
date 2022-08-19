@@ -255,7 +255,6 @@ class tigtec:
             cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
             cf_token_change = G_text.nodes.data()[r]['hist_mask']
             token_change.iloc[cf_token_change,1]=1
-            print(r)
             change_to_plot_html.append(plot_change(token_change, n_colors=100))
         
         
