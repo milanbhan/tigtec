@@ -53,7 +53,7 @@ class tigtec:
         self.beam_width = beam_width
         self.alpha = alpha
         
-        self.cf_graph, self.cf_html_list = self.generate_cf_graph()
+        self.cf_graph, self.cf_list, self.cf_html_list = self.generate_cf_graph()
 
         
 
