@@ -85,6 +85,24 @@ class BertClassifier(nn.Module):
         
         return(probs)
     
+    def sentence_embedding_cls(self, text) :
+        input, mask = preprocessing_for_bert(text, self.tokenizer)
+        encoded_att = self.bert(input,attention_mask=mask, output_hidden_states=True)
+        #   embed_text = encoded_att[0][0][0]
+        last_hidden_states  = encoded_att.hidden_states[-1]
+        embed_text = last_hidden_states[0,0,:]
+
+        return(embed_text)
+    
+    def cls_similarity(self, text1, text2) :
+        cos = nn.CosineSimilarity(dim=1, eps=1e-6)
+        embed_text1 = self.sentence_embedding_cls(text1)
+        embed_text2 = self.sentence_embedding_cls(text2)
+        
+        similarity = cos(embed_text1.unsqueeze(0), embed_text2.unsqueeze(0)).item()
+        
+        return(similarity)
+
     def forward(self, input_ids, attention_mask):
         """
         Feed input to BERT and the classifier to compute logits.
