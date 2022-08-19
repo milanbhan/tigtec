@@ -31,7 +31,7 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 class BertClassifier(nn.Module):
     """DistillBert Model for Classification Tasks.
     """
-    def __init__(self, nb_class, model='distilbert' , freeze_bert=False):
+    def __init__(self, nb_class, tokenizer, model='distilbert' , freeze_bert=False):
         """
         @param    model: a BertModel object : DistilBertModel or BERTModel
         @param    classifier: a torch.nn.Module classifier
@@ -60,6 +60,7 @@ class BertClassifier(nn.Module):
                                                     output_attentions = True, 
                                                     return_dict = True,
                                                     output_hidden_states = False)
+        self.tokenizer = tokenizer
 
         # Instantiate an one-layer feed-forward classifier
         self.classifier = nn.Sequential(
@@ -203,11 +204,11 @@ def build_data_loader(text, target, tokenizer, max_len = 68, batch_size = 32):
     return train_dataloader, test_dataloader
     
 
-def initialize_model(train_dataloader, nb_class, epochs=4):
+def initialize_model(train_dataloader, tokenizer, nb_class, epochs=4):
     """Initialize the Bert Classifier, the optimizer and the learning rate scheduler.
     """
     # Instantiate Bert Classifier
-    bert_classifier = BertClassifier(nb_class, freeze_bert=False)
+    bert_classifier = BertClassifier(nb_class, tokenizer, freeze_bert=False)
 
     # Tell PyTorch to run the model on GPU
     bert_classifier.to(bert_classifier.device)
