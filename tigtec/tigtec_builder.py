@@ -124,7 +124,7 @@ class tigtec:
         dist_list = []
         for t in new_tokens :
             #Remplacer iter review par init review pour maximiser la distance par rapport au point de départ
-            cost  = self.cf_cost(self, [old_review], [new_review.replace("[MASK]", t)])
+            cost  = self.cf_cost([old_review], [new_review.replace("[MASK]", t)])
             dist_list.append(cost)
         
         #   review_max = np.argmax(dist_list)
