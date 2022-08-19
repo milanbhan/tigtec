@@ -12,6 +12,10 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 import random
 import time
+#for coloring text
+from scipy.special import softmax
+from IPython.core.display import display, HTML
+import seaborn as sns
  
 #NLP/DL librarie
 #Transformers
@@ -186,7 +190,7 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
     
-    def compute_token_importance(self, text, method:str):
+    def compute_token_importance(self, text, method:str="attention"):
         if method == 'random' :
             attribution_coefficient = self.random_token_importance(text)
         if method == 'lime' :
@@ -252,6 +256,22 @@ class BertClassifier(nn.Module):
 
         return logits
     
+    def plot_attention(self, text, method='attention', n_colors=15) :
+          
+        token_importance = self.compute_token_importance(text=text, method=method)
+        
+        pal = get_palette(theme="Reds", n_colors=n_colors)
+        sentence=list(token_importance['token'].values)
+        scores = list(token_importance['Attribution coefficient'].values)
+        
+        #   scores -= min(scores)
+        scores = list(scores/(max(scores))) 
+        scores = np.power(scores, 2)
+        #   scores = softmax(scores)
+
+        html = color_sentence(sentence, scores, pal, n_colors)
+        displayHTML(html)
+        
     
 
 #Target variable encoding
@@ -501,3 +521,25 @@ def evaluate(model, val_dataloader, loss_fn = nn.CrossEntropyLoss()):
     val_accuracy = np.mean(val_accuracy)
 
     return val_loss, val_accuracy
+
+def get_palette(theme="YlOrBr", n_colors=1000):
+    pal = sns.color_palette(theme, as_cmap=False, n_colors=n_colors)
+#     pal = sns.color_palette("vlag", as_cmap=True)
+    pal = (np.array(pal) * 255).astype(int)
+#     pal = list(map(lambda x: "#%02x%02x%02x" % tuple(x), pal))
+    pal = list(map(pal, lambda x: "#%02x%02x%02x" % tuple(x)))
+    return np.array(pal)
+
+def get_color(word, palette, score = 0.5, n_colors = 1000):
+    # Score must be between zero and one
+    index = max([int(n_colors * score - 1), 0])
+    col = palette[index]
+#     col = palette[int(n_colors * score - 1)]
+    color = 'white' if score > 0.6 else 'black'
+    return f'<a style="background-color : {col};color:{color};">{word}</a>'
+
+def color_sentence(tokens, scores, palette, n_colors = 1000):
+    html = [get_color(tokens[i], palette, scores[i], n_colors) for i, elt in enumerate(tokens)]
+    html = '<div display:inline-block>' + ' '.join(html) + '</div>'
+    return html
+
