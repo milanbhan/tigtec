@@ -543,3 +543,13 @@ def color_sentence(tokens, scores, palette, n_colors = 1000):
     html = '<div display:inline-block>' + ' '.join(html) + '</div>'
     return html
 
+def plot_change(change_df, n_colors=2) :
+      
+  pal = get_palette(theme="Blues", n_colors=n_colors)
+
+  sentence=list(change_df['token'].values)
+  scores = list(change_df['Attribution coefficient'].values)
+  
+  html = color_sentence(sentence, scores, pal, n_colors)
+  return(html)
+
