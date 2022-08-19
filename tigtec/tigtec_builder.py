@@ -259,6 +259,6 @@ class tigtec:
             change_to_plot_html.append(plot_change(token_change, n_colors=100))
         
         
-        return(G_text, change_to_plot_html)
+        return(G_text, cf_list, change_to_plot_html)
 
         
