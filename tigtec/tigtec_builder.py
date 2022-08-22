@@ -371,7 +371,7 @@ class tigtec:
             grammar_accuracy_iter = []
             for cf in self.cf_list[idx] :
                 text_input = cf.capitalize()
-                if cf[-1] !='.':
+                if text_input[-1] !='.':
                     text_input += '.'
                 #computing grammar correction
                 result = happy_tt.generate_text("grammar: " + text_input, args=args)
