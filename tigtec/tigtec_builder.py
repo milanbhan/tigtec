@@ -277,15 +277,27 @@ class tigtec:
         
         return(G_text, cf_list, change_to_plot_html)
     
-    def bleu_score(text:str, cf:str):
+    def bleu_score(self):
         """compute cf BLEU score
 
         Args:
-            text (str): initial text
-            cf (str): one cf
+        
         """
-        BLEUscore = nltk.translate.bleu_score.sentence_bleu([text.split()], cf.split())
-        return(BLEUscore)
+        
+        if len(self.graph_cf) == 0 :
+            raise Exception("No cf computed yet, please compute some cf first")
+        
+        avg_bleu_score_list = []
+        for idx in range(len(self.reviews) :
+            init = [self.reviews[idx][0].split()]
+            avg_bleu_score_iter_list = []
+            for cf in self.cf_list[idx] :
+                BLEUscore = nltk.translate.bleu_score.sentence_bleu(init, cf.split())
+                avg_bleu_score_iter_list.append(BLEUscore)
+
+            avg_bleu_score_list.append(np.mean(avg_bleu_score_iter_list))
+            
+        return(avg_bleu_score_list)
     
     def diversity(self, sentence_similarity:str="cls_embedding", reg_coeff = 1) :
         """compute dpp diversity & average distance between cf
