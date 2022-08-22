@@ -276,15 +276,19 @@ class tigtec:
         BLEUscore = nltk.translate.bleu_score.sentence_bleu([text.split()], cf.split())
         return(BLEUscore)
     
-    def cf_diversity(self, sentence_similarity:str="cls_embedding", reg_coeff = 1) :
+    def cf_diversity(self, sentence_similarity:str="cls_embedding", reg_coeff = 1, idx=0) :
         """compute dpp diversity & average distance between cf
 
         Args:
             sentence_similarity (str): text distance. Defaults to "cls_embedding".
             reg_coeff (int): regularization coefficient for dpp determinant. Defaults to 1.
+            idx (int) : element of the list of graph cfs
         """
-  
-        nodes_result = [x for x in self.graph_cf.nodes() if self.graph_cf.nodes.data()[x]['cf']]
+        
+        if len(self.graph_cf) == 0 :
+            raise Exception("No cf computed yet, please compute some cf first")
+        
+        nodes_result = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
         nodes_result.append(0)
 
         dist_matrix = np.empty([len(nodes_result), len(nodes_result)], dtype=float)
@@ -295,7 +299,7 @@ class tigtec:
                 if j==l :
                     dist_matrix[i,k] = 1
                     pass
-                cf_review = [" ".join(self.graph_cf.nodes.data()[l]['text'])]
+                cf_review = [" ".join(self.graph_cf[idx].nodes.data()[l]['text'])]
                 
                 if sentence_similarity == "cls_embedding" :  
                     similarity += self.classifier.cls_similarity(init_review, cf_review)
