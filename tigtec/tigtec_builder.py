@@ -168,7 +168,7 @@ class tigtec:
         
         return(new_reviews, new_reviews_tokenized, token_max, new_tokens_variety)
     
-    def generate_cf_graph(self, review):
+    def generate_cf(self, review):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
         init_state = np.argmax(init_pred)
