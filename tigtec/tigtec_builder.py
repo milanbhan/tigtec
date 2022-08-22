@@ -302,10 +302,10 @@ class tigtec:
                 cf_review = [" ".join(self.graph_cf[idx].nodes.data()[l]['text'])]
                 
                 if sentence_similarity == "cls_embedding" :  
-                    similarity += self.classifier.cls_similarity(init_review, cf_review)
+                    similarity = self.classifier.cls_similarity(init_review, cf_review)
             
                 if sentence_similarity == "sentence_transformer" :
-                    similarity += self.sentence_transformer_similarity(init_review, cf_review)
+                    similarity = self.sentence_transformer_similarity(init_review, cf_review)
         
                     
                 dist_matrix[i,k] = similarity
