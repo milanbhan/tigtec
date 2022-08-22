@@ -288,7 +288,7 @@ class tigtec:
             raise Exception("No cf computed yet, please compute some cf first")
         
         avg_bleu_score_list = []
-        for idx in range(len(self.reviews) :
+        for idx in range(len(self.reviews)) :
             init = [self.reviews[idx][0].split()]
             avg_bleu_score_iter_list = []
             for cf in self.cf_list[idx] :
