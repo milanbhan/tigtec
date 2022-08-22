@@ -61,9 +61,11 @@ class tigtec:
         self.beam_width = beam_width
         self.alpha = alpha
         
-        #List of graph cf
+        #List of cf & cf informations
         self.graph_cf = []
         self.cf_list = []
+        self.cf_html_list = []
+        self.reviews = []
         
     def mlm_inference(self, masked_text) :
         inputs = self.classifier.tokenizer(masked_text, return_tensors='pt')
@@ -270,6 +272,9 @@ class tigtec:
         
         self.graph_cf.append(G_text)
         self.cf_list.append(cf_list)
+        self.reviews.append(review)
+        self.cf_html_list.append(change_to_plot_html)
+        
         return(G_text, cf_list, change_to_plot_html)
     
     def bleu_score(text:str, cf:str):
