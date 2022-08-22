@@ -22,6 +22,10 @@ from scipy import spatial
 #graph library
 import networkx as nx
 
+#nlp library fom BLEU score
+import nltk
+
+
 #colour function on torch_text_classifier
 from  tigtec.torch_text_classifier import plot_change
 
@@ -99,7 +103,7 @@ class tigtec:
         #   cost = score_dist + similarity
         cost = - (score_target + similarity*(self.alpha))
         
-        return(cost)
+        return(cost, similarity)
 
     def replace_token(self, review, to_mask):
       
@@ -125,7 +129,7 @@ class tigtec:
         dist_list = []
         for t in new_tokens :
             #Remplacer iter review par init review pour maximiser la distance par rapport au point de départ
-            cost  = self.cf_cost([old_review], [new_review.replace("[MASK]", t)])
+            cost  = self.cf_cost([old_review], [new_review.replace("[MASK]", t)])[0]
             dist_list.append(cost)
         
         #   review_max = np.argmax(dist_list)
@@ -175,7 +179,7 @@ class tigtec:
         text_initial_tokenized = attribution_coeff['token'].tolist()
         #   text_initial_tokenized = [tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         G_text = nx.DiGraph()
-        G_text.add_node(0, text = text_initial_tokenized, hist_mask = [], hist_mask_text = [], attrib_coeff = 1, cost = init_cost, state=init_state, cf = False)
+        G_text.add_node(0, text = text_initial_tokenized, hist_mask = [], hist_mask_text = [], attrib_coeff = 1, cost = init_cost, similarity = 1, state=init_state, cf = False)
         wait_list = [(0,1)]
         indx=0
         
@@ -220,13 +224,16 @@ class tigtec:
                     cf_state_iter = np.argmax(cf_pred_iter)
                     cf_to_keep_iter = cf_pred_iter[0][init_state] <= 0.5 - self.margin
 
-                    cost_iter  = self.cf_cost(review, [new_reviews[k]])
+                    cost_iter, similarity_iter  = self.cf_cost(review, [new_reviews[k]])
                     #Création des arrêtes et noeuds du graph
                     print("edge " + str(i)+ "-" + str(indx) + ", state : " + str(cf_state_iter) + ", cf candidate: " + str(cf_to_keep_iter) + ", cost: " + str(cost_iter))
             #       print(' '.join(new_review_tokenized))
             #         print(str(old_token) + str(" -----> ") + str(new_token))
                     G_text.add_edge(i, indx)
-                    G_text.add_node(indx, text = new_reviews_tokenized[k], hist_mask = predecessor_hist_mask_iter, hist_mask_text = predecessor_text_masked_iter, attrib_coeff = attribution_iter.loc[j]['Attribution coefficient'], cost = float(cost_iter), state = cf_state_iter, cf = cf_to_keep_iter)
+                    G_text.add_node(indx, text = new_reviews_tokenized[k], 
+                                    hist_mask = predecessor_hist_mask_iter, hist_mask_text = predecessor_text_masked_iter, 
+                                    attrib_coeff = attribution_iter.loc[j]['Attribution coefficient'], cost = float(cost_iter), 
+                                    similarity = similarity_iter, state = cf_state_iter, cf = cf_to_keep_iter)
 
                     wait_list = [(x, G_text.nodes.data()[x]['cost']) for x in G_text.nodes() if G_text.out_degree(x)==0 and G_text.in_degree(x)==1 and G_text.nodes.data()[x]['cf']==False]
                     wait_list.sort(reverse=False, key = lambda tup : tup[1])
@@ -257,5 +264,14 @@ class tigtec:
         
         
         return(G_text, cf_list, change_to_plot_html)
+    
+    def bleu_score(text:str, cf:str):
+        """compute cf BLEU score
 
+        Args:
+            text (str): initial text
+            cf (str): one cf
+        """
+        BLEUscore = nltk.translate.bleu_score.sentence_bleu([text.split()], cf.split())
+        return(BLEUscore)
         
