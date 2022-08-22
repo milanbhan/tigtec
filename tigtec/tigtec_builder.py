@@ -19,6 +19,10 @@ import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer
 from scipy import spatial
 
+#T5 grammar correction
+import happytransformer
+
+
 #graph library
 import networkx as nx
 
@@ -59,6 +63,7 @@ class tigtec:
         
         #List of graph cf
         self.graph_cf = []
+        self.cf_list = []
         
     def mlm_inference(self, masked_text) :
         inputs = self.classifier.tokenizer(masked_text, return_tensors='pt')
@@ -264,6 +269,7 @@ class tigtec:
             change_to_plot_html.append(plot_change(token_change, n_colors=100))
         
         self.graph_cf.append(G_text)
+        self.cf_list.append(cf_list)
         return(G_text, cf_list, change_to_plot_html)
     
     def bleu_score(text:str, cf:str):
@@ -276,45 +282,94 @@ class tigtec:
         BLEUscore = nltk.translate.bleu_score.sentence_bleu([text.split()], cf.split())
         return(BLEUscore)
     
-    def cf_diversity(self, sentence_similarity:str="cls_embedding", reg_coeff = 1, idx=0) :
+    def diversity(self, sentence_similarity:str="cls_embedding", reg_coeff = 1) :
         """compute dpp diversity & average distance between cf
 
         Args:
             sentence_similarity (str): text distance. Defaults to "cls_embedding".
             reg_coeff (int): regularization coefficient for dpp determinant. Defaults to 1.
-            idx (int) : element of the list of graph cfs
         """
         
         if len(self.graph_cf) == 0 :
             raise Exception("No cf computed yet, please compute some cf first")
         
-        nodes_result = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
-        nodes_result.append(0)
+        det_list = []
+        avg_dist_list = []
+        
+        for idx in range(len(self.graph_cf)) :
+        
+            nodes_result = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
+            nodes_result.append(0)
 
-        dist_matrix = np.empty([len(nodes_result), len(nodes_result)], dtype=float)
-        
-        for i,j in enumerate(nodes_result) :
-            init_review = [" ".join(self.graph_cf[idx].nodes.data()[j]['text'])]
-            for k,l in enumerate(nodes_result) :
-                if j==l :
-                    dist_matrix[i,k] = 1
-                    pass
-                cf_review = [" ".join(self.graph_cf[idx].nodes.data()[l]['text'])]
-                
-                if sentence_similarity == "cls_embedding" :  
-                    similarity = self.classifier.cls_similarity(init_review, cf_review)
+            dist_matrix = np.empty([len(nodes_result), len(nodes_result)], dtype=float)
             
-                if sentence_similarity == "sentence_transformer" :
-                    similarity = self.sentence_transformer_similarity(init_review, cf_review)
-        
+            for i,j in enumerate(nodes_result) :
+                init_review = [" ".join(self.graph_cf[idx].nodes.data()[j]['text'])]
+                for k,l in enumerate(nodes_result) :
+                    if j==l :
+                        dist_matrix[i,k] = 1
+                        pass
+                    cf_review = [" ".join(self.graph_cf[idx].nodes.data()[l]['text'])]
                     
-                dist_matrix[i,k] = similarity
+                    if sentence_similarity == "cls_embedding" :  
+                        similarity = self.classifier.cls_similarity(init_review, cf_review)
+                
+                    if sentence_similarity == "sentence_transformer" :
+                        similarity = self.sentence_transformer_similarity(init_review, cf_review)
+              
+                    dist_matrix[i,k] = similarity
         
-        #computing dpp matrix & determinant
-        dpp_mat = 1/(dist_matrix[1:, 1:] + reg_coeff)
-        det = np.linalg.det(dpp_mat)
-        #compute average distance between cf
-        avg_dist = sum(dist_matrix[1:, 1:])/dist_matrix[1:, 1:].shape[0]
+            #computing dpp matrix & determinant
+            dpp_mat = 1/(dist_matrix[1:, 1:] + reg_coeff)
+            det = np.linalg.det(dpp_mat)
+            det_list.append(det)
+            #compute average distance between cf
+            avg_dist = sum(dist_matrix[1:, 1:])/dist_matrix[1:, 1:].shape[0]
+            avg_dist_list.append(avg_dist[0])
         
-        return(det, avg_dist)
+        return(det_list, avg_dist_list)
+
+    def grammatical_accuracy(self, num_beams=5) :
+        """assess the grammatical accuracy of the CF generated
+
+        Args:
+            num_beams (int, optional):exhaustivity of the paths computed. Defaults to 5.
+
+        Raises:
+            Exception: CFs have to be computed before
+        """
+   
+        if len(self.graph_cf) == 0 :
+            raise Exception("No cf computed yet, please compute some cf first")
+        
+        from happytransformer import HappyTextToText, TTSettings
+        
+        happy_tt = HappyTextToText("T5", "vennify/t5-base-grammar-correction")  
+        args = TTSettings(num_beams, min_length=1)
+        
+        grammar_accuracy_list = []
+        
+        for idx in range(len(self.cf_list)) :
+            grammar_accuracy_iter = []
+            for cf in self.cf_list[idx] :
+                text_input = cf.capitalize()
+                if cf[-1] !='.':
+                    text_input += '.'
+                #computing grammar correction
+                result = happy_tt.generate_text("grammar: " + text_input, args=args)
+                if (text_input == result) :
+                    grammar_accuracy_iter.append(1)
+                else :
+                    grammar_accuracy_iter.append(0)
+                
+                #Add average grammar accuracy for one set of CF    
+            grammar_accuracy_list.append(np.mean(grammar_accuracy_iter))
+            
+        return(grammar_accuracy_list)
+                    
+                 
+            
+            
+            
+        
         
