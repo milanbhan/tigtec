@@ -375,7 +375,7 @@ class tigtec:
                     text_input += '.'
                 #computing grammar correction
                 result = happy_tt.generate_text("grammar: " + text_input, args=args)
-                if (text_input == result) :
+                if (text_input == result.text) :
                     grammar_accuracy_iter.append(1)
                 else :
                     grammar_accuracy_iter.append(0)
