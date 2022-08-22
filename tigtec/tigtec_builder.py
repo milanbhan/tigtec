@@ -379,7 +379,7 @@ class tigtec:
                     grammar_accuracy_iter.append(1)
                 else :
                     grammar_accuracy_iter.append(0)
-                print(text_input + '-----' + result)
+                print(text_input + '-----' + result.text)
                 # print(result)
                 
                 #Add average grammar accuracy for one set of CF    
