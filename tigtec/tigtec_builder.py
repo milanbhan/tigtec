@@ -57,6 +57,9 @@ class tigtec:
         self.beam_width = beam_width
         self.alpha = alpha
         
+        #List of graph cf
+        self.graph_cf = []
+        
     def mlm_inference(self, masked_text) :
         inputs = self.classifier.tokenizer(masked_text, return_tensors='pt')
   
@@ -245,9 +248,7 @@ class tigtec:
                     #Si on a trouvé assez de cf ou bien si on a  changé tous les mots, on arrête
                     if nb_cf == self.n | len(predecessor_text_masked_iter) == len(G_text.nodes.data()[0]['text']) :
                         break
-
-
-        
+ 
         #Viz cf détectés
         nodes_result = [x for x in G_text.nodes() if G_text.nodes.data()[x]['cf']]
         change_to_plot_html = []
@@ -262,7 +263,7 @@ class tigtec:
             token_change.iloc[cf_token_change,1]=1
             change_to_plot_html.append(plot_change(token_change, n_colors=100))
         
-        
+        self.graph_cf = G_text
         return(G_text, cf_list, change_to_plot_html)
     
     def bleu_score(text:str, cf:str):
