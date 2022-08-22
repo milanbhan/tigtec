@@ -294,7 +294,7 @@ class tigtec:
         dist_matrix = np.empty([len(nodes_result), len(nodes_result)], dtype=float)
         
         for i,j in enumerate(nodes_result) :
-            init_review = [" ".join(self.graph.nodes.data()[j]['text'])]
+            init_review = [" ".join(self.graph_cf.nodes.data()[j]['text'])]
             for k,l in enumerate(nodes_result) :
                 if j==l :
                     dist_matrix[i,k] = 1
