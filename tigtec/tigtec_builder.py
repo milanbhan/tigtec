@@ -362,7 +362,8 @@ class tigtec:
         from happytransformer import HappyTextToText, TTSettings
         
         happy_tt = HappyTextToText("T5", "vennify/t5-base-grammar-correction")  
-        args = TTSettings(num_beams, min_length=1)
+        # args = TTSettings(num_beams, min_length=1)
+        args = TTSettings(num_beams)
         
         grammar_accuracy_list = []
         
