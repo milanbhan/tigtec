@@ -263,7 +263,7 @@ class tigtec:
             token_change.iloc[cf_token_change,1]=1
             change_to_plot_html.append(plot_change(token_change, n_colors=100))
         
-        self.graph_cf.append = G_text
+        self.graph_cf.append(G_text)
         return(G_text, cf_list, change_to_plot_html)
     
     def bleu_score(text:str, cf:str):
