@@ -86,6 +86,8 @@ class BertClassifier(nn.Module):
                                                     return_dict = True,
                                                     output_hidden_states = False)
         self.tokenizer = tokenizer
+        self.true_to_pred = {}
+        self.pred_to_true = {}
 
         # Instantiate an one-layer feed-forward classifier
         self.classifier = nn.Sequential(
@@ -328,7 +330,7 @@ def categorical_variables(labels):
         y1.append(true_to_pred[elt])
     
     y = y1
-    return(y)
+    return(y,true_to_pred ,pred_to_true)
 
 def preprocessing_for_bert(text, tokenizer, max_len = 68):
     """Perform required preprocessing steps for pretrained BERT.
@@ -374,7 +376,7 @@ def build_data_loader(text, target, tokenizer, max_len = 68, batch_size = 32):
     X, X_mask = preprocessing_for_bert(text, tokenizer, max_len)
     
         #Preparing label 
-    y = categorical_variables(target)
+    y,true_to_pred ,pred_to_true = categorical_variables(target)
     y = torch.tensor(y)
 
     # y = np_utils.to_categorical(y)
@@ -396,7 +398,7 @@ def build_data_loader(text, target, tokenizer, max_len = 68, batch_size = 32):
     test_sampler = SequentialSampler(test_data)
     test_dataloader = DataLoader(test_data, sampler=test_sampler, batch_size=batch_size)
     
-    return train_dataloader, test_dataloader
+    return train_dataloader, test_dataloader, true_to_pred, pred_to_true
     
 
 def initialize_model(train_dataloader, model, tokenizer, nb_class, epochs=4):
