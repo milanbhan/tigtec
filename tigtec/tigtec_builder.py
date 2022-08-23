@@ -419,3 +419,13 @@ class tigtec:
         ppl = torch.exp(torch.stack(nlls).sum() / end_loc)
         
         return(ppl)
+    
+    def loss(self, stride = 64):
+        bleu_score = np.mean(self.bleu_score())
+        t5_grammar = np.mean(self.grammatical_accuracy())
+        diversity = np.mean(self.diversity(), axis=0)[0]
+        # perplexity = self.perplexity(stride)
+        
+        loss = -(bleu_score + t5_grammar  + diversity)
+        
+        return(loss)
