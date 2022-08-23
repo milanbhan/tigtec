@@ -20,7 +20,7 @@ import seaborn as sns
 #NLP/DL librarie
 #Transformers
 import transformers
-from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig, FlaubertTokenizer, FlaubertModel
+from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig, FlaubertTokenizer, FlaubertModel, CamembertTokenizer, CamembertModel, CamembertForMaskedLM
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 
@@ -75,6 +75,11 @@ class BertClassifier(nn.Module):
             
         elif model == 'flaubert' :
             self.bert = FlaubertModel.from_pretrained("flaubert/flaubert_base_cased",
+                                                    output_attentions = True, 
+                                                    return_dict = True,
+                                                    output_hidden_states = False)
+        elif model == 'camembert' :
+            self.bert = FlaubertModel.from_pretrained("camembert-base",
                                                     output_attentions = True, 
                                                     return_dict = True,
                                                     output_hidden_states = False)
