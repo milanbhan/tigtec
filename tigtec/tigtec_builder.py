@@ -397,13 +397,12 @@ class tigtec:
         tokenizer = GPT2TokenizerFast.from_pretrained(model_id)
         
         text =  " \n\n ".join([" \n\n ".join(cf) for cf in self.cf_list])
-        print(type(text))
         
         encodings = tokenizer(text, return_tensors="pt")
         max_length = model.config.n_positions
 
         nlls = []
-        for i in tqdm(range(0, encodings.input_ids.size(1), stride)):
+        for i in range(0, encodings.input_ids.size(1), stride):
             begin_loc = max(i + stride - max_length, 0)
             end_loc = min(i + stride, encodings.input_ids.size(1))
             trg_len = end_loc - i  # may be different from stride on last loop
