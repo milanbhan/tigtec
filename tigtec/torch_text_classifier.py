@@ -20,7 +20,7 @@ import seaborn as sns
 #NLP/DL librarie
 #Transformers
 import transformers
-from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig
+from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig, FlaubertTokenizer, FlaubertModel
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 
@@ -69,6 +69,12 @@ class BertClassifier(nn.Module):
                                                     output_hidden_states = False)
         elif model == 'bert' :
             self.bert = BertModel.from_pretrained('bert-base-uncased',
+                                                    output_attentions = True, 
+                                                    return_dict = True,
+                                                    output_hidden_states = False)
+            
+        elif model == 'flaubert' :
+            self.bert = FlaubertModel.from_pretrained("flaubert/flaubert_base_cased",
                                                     output_attentions = True, 
                                                     return_dict = True,
                                                     output_hidden_states = False)
@@ -369,11 +375,11 @@ def build_data_loader(text, target, tokenizer, max_len = 68, batch_size = 32):
     return train_dataloader, test_dataloader
     
 
-def initialize_model(train_dataloader, tokenizer, nb_class, epochs=4):
+def initialize_model(train_dataloader, model, tokenizer, nb_class, epochs=4):
     """Initialize the Bert Classifier, the optimizer and the learning rate scheduler.
     """
     # Instantiate Bert Classifier
-    bert_classifier = BertClassifier(nb_class, tokenizer, freeze_bert=False)
+    bert_classifier = BertClassifier(nb_class, tokenizer, model, freeze_bert=False)
 
     # Tell PyTorch to run the model on GPU
     bert_classifier.to(bert_classifier.device)
