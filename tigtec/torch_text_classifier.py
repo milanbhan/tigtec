@@ -158,11 +158,8 @@ class BertClassifier(nn.Module):
             for i, elt in enumerate(input[0]):
                 #Ne pas prendre les éléments masqués
                 #!=0 car on ne prend pas les tokens padding
-                if self.tokenizer.name_or_path == 'camembert-base':
-                    pad_encoding = 1
-                else :
-                    pad_encoding = 0
-                if elt.numpy() != pad_encoding:
+
+                if elt.numpy() != self.tokenizer.pad_token_id:
                     #Sélection du coefficient d'attention associé,
                     #premier coefficient 0 pour ids1
                     #Dernier coefficient 0 = indice de l'objet de la classif par défault 
