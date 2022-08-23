@@ -38,6 +38,8 @@ from lime.lime_text import LimeTextExplainer
 #graph library
 import networkx as nx
 
+import nltk
+
 
 # Create the BertClassfier class
 class BertClassifier(nn.Module):
@@ -212,19 +214,35 @@ class BertClassifier(nn.Module):
         if method == 'shap' :
             attribution_coefficient = self.shap_token_importance(text)
         
-        attribution_coefficient['to_keep']='yes'
-        attribution_coefficient['to_keep'][attribution_coefficient.token.str.startswith("##")]='no'
-    
-        #Regroupement des tokens séparés par le tokenizer, visibles grâce à ##
-        for i in range(attribution_coefficient.shape[0]-1, 0, -1) :
-            if attribution_coefficient.token[i][0:2]=="##" :
-                attribution_coefficient.token[i-1]+=attribution_coefficient.token[i]
-                attribution_coefficient['Attribution coefficient'][i-1]+=attribution_coefficient['Attribution coefficient'][i]
-                
-        attribution_coefficient = attribution_coefficient[attribution_coefficient['to_keep']=='yes']
-        attribution_coefficient.token = attribution_coefficient.token.str.replace("##", "")
-        attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
-        attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
+        #Handling byte pair encoding without ##
+        if self.tokenizer.name_or_path == 'camembert-base' :
+            from nltk.tokenize import WordPunctTokenizer
+            merged_tokenized = WordPunctTokenizer().tokenize(text[0])
+            attribution_coefficient=attribution_coefficient[attribution_coefficient['token']!='']
+            attribution_coefficient.reset_index(inplace=True, drop=True)
+            for i in range(attribution_coefficient.shape[0]-1,0, -1) :
+                if attribution_coefficient.iloc[i]['token'] in (merged_tokenized):
+                    pass
+                else :
+                    attribution_coefficient['token'][i-1] += attribution_coefficient['token'][i]
+                    attribution_coefficient['Attribution coefficient'][i-1] += attribution_coefficient['Attribution coefficient'][i]
+            attribution_coefficient = attribution_coefficient[attribution_coefficient.token.isin(merged_tokenized)]
+            attribution_coefficient = attribution_coefficient[attribution_coefficient.token.isin(merged_tokenized)]
+            
+        else : 
+            attribution_coefficient['to_keep']='yes'
+            attribution_coefficient['to_keep'][attribution_coefficient.token.str.startswith("##")]='no'
+        
+            #Regroupement des tokens séparés par le tokenizer, visibles grâce à ##
+            for i in range(attribution_coefficient.shape[0]-1, 0, -1) :
+                if attribution_coefficient.token[i][0:2]=="##" :
+                    attribution_coefficient.token[i-1]+=attribution_coefficient.token[i]
+                    attribution_coefficient['Attribution coefficient'][i-1]+=attribution_coefficient['Attribution coefficient'][i]
+                    
+            attribution_coefficient = attribution_coefficient[attribution_coefficient['to_keep']=='yes']
+            attribution_coefficient.token = attribution_coefficient.token.str.replace("##", "")
+            attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
+            attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
         
         return(attribution_coefficient)
         
