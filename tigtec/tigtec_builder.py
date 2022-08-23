@@ -396,7 +396,8 @@ class tigtec:
         model = GPT2LMHeadModel.from_pretrained(model_id).to(device)
         tokenizer = GPT2TokenizerFast.from_pretrained(model_id)
         
-        text =  "\n\n".join(["\n\n".join(cf) for cf in self.cf_list])      
+        text =  " \n\n ".join([" \n\n ".join(cf) for cf in self.cf_list])
+        print(type(text))
         
         encodings = tokenizer(text, return_tensors="pt")
         max_length = model.config.n_positions
