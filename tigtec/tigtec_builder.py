@@ -423,6 +423,7 @@ class tigtec:
     def loss(self, stride = 64):
         bleu_score = np.mean(self.bleu_score())
         t5_grammar = np.mean(self.grammatical_accuracy())
+        #focusing on dpp diversity, not average distance
         diversity = np.mean(self.diversity(), axis=0)[0]
         # perplexity = self.perplexity(stride)
         
