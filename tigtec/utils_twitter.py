@@ -133,7 +133,7 @@ def scrap_twitter(candidate_list, nb_tweets) :
         for i,tweet in enumerate(sntwitter.TwitterSearchScraper(f'from:{c}').get_items()): #declare a username 
             if i>nb_tweets: #number of tweets you want to scrape
                 break
-        tweets_list1.append([tweet.date, tweet.id, tweet.content, tweet.user.username]) #declare the attributes to be returned
+            tweets_list1.append([tweet.date, tweet.id, tweet.content, tweet.user.username]) #declare the attributes to be returned
 
     # Creating a dataframe from the tweets list above 
     tweets_df = pd.DataFrame(tweets_list1, columns=['Datetime', 'Tweet Id', 'Text', 'Username'])
