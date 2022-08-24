@@ -81,7 +81,7 @@ class BertClassifier(nn.Module):
                                                     return_dict = True,
                                                     output_hidden_states = False)
         elif model == 'camembert' :
-            self.bert = FlaubertModel.from_pretrained("camembert-base",
+            self.bert = CamembertModel.from_pretrained("camembert-base",
                                                     output_attentions = True, 
                                                     return_dict = True,
                                                     output_hidden_states = False)
