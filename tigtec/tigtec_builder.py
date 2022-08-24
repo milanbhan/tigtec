@@ -244,6 +244,7 @@ class tigtec:
                     cost_iter, similarity_iter  = self.cf_cost(review, [new_reviews[k]], target_state)
                     #Création des arrêtes et noeuds du graph
                     print("edge " + str(i)+ "-" + str(indx) + ", state : " + str(cf_state_iter) + ", cf candidate: " + str(cf_to_keep_iter) + ", cost: " + str(cost_iter))
+                    print(' '.join(new_reviews_tokenized[k]))
             #       print(' '.join(new_review_tokenized))
             #         print(str(old_token) + str(" -----> ") + str(new_token))
                     G_text.add_edge(i, indx)
