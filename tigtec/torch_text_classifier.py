@@ -401,7 +401,7 @@ def build_data_loader(text, target, tokenizer, max_len = 68, batch_size = 32):
     return train_dataloader, test_dataloader, true_to_pred, pred_to_true
     
 
-def initialize_model(train_dataloader, model, tokenizer, nb_class, true_to_pred, pred_to_true epochs=4):
+def initialize_model(train_dataloader, model, tokenizer, nb_class, true_to_pred, pred_to_true, epochs=4):
     """Initialize the Bert Classifier, the optimizer and the learning rate scheduler.
     """
     # Instantiate Bert Classifier
