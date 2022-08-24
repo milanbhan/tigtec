@@ -127,7 +127,7 @@ def remove_bad_space(text) :
 
     return(text)
 
-def scrap_twitter (candidate_list, nb_tweets) :
+def scrap_twitter(candidate_list, nb_tweets) :
     tweets_list1 = []
     for c in candidate_list :
         for i,tweet in enumerate(sntwitter.TwitterSearchScraper(f'from:{c}').get_items()): #declare a username 
