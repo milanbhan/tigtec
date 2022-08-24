@@ -174,6 +174,7 @@ class tigtec:
     def generate_cf(self, review, target):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
+        nb_class = init_pred.shape[1]
         init_state = np.argmax(init_pred)
         target_state = target
         # target_state = np.argmin(init_pred)
@@ -236,7 +237,9 @@ class tigtec:
                     #Nouvelle prédiction
                     cf_pred_iter = self.classifier.predict([new_reviews[k]])
                     cf_state_iter = np.argmax(cf_pred_iter)
-                    cf_to_keep_iter = cf_pred_iter[0][init_state] <= 0.5 - self.margin
+                    #on garde le cf si la pred est > à la moyenne + une marge, et que c'est bien la pred la plus élevée
+                    cf_to_keep_iter = (cf_pred_iter[0][target_state] >= 1/nb_class  + self.margin) & (cf_pred_iter[target_state] == np.max(cf_pred_iter))
+                    # cf_to_keep_iter = cf_pred_iter[0][init_state] <= 0.5 - self.margin
 
                     cost_iter, similarity_iter  = self.cf_cost(review, [new_reviews[k]], target_state)
                     #Création des arrêtes et noeuds du graph
