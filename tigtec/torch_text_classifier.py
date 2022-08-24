@@ -246,7 +246,7 @@ class BertClassifier(nn.Module):
             attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
             attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
         
-        attribution_coefficient['Attribution coefficient'][attribution_coefficient['token'].isin(['.', ',', ';'])==True]=0
+        attribution_coefficient['Attribution coefficient'][attribution_coefficient['token'].isin(['.', ',', ';', '!', '?'])==True]=0
         
         return(attribution_coefficient)
         
