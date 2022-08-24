@@ -401,11 +401,13 @@ def build_data_loader(text, target, tokenizer, max_len = 68, batch_size = 32):
     return train_dataloader, test_dataloader, true_to_pred, pred_to_true
     
 
-def initialize_model(train_dataloader, model, tokenizer, nb_class, epochs=4):
+def initialize_model(train_dataloader, model, tokenizer, nb_class, true_to_pred, pred_to_true epochs=4):
     """Initialize the Bert Classifier, the optimizer and the learning rate scheduler.
     """
     # Instantiate Bert Classifier
     bert_classifier = BertClassifier(nb_class, tokenizer, model, freeze_bert=False)
+    bert_classifier.true_to_pred = true_to_pred
+    bert_classifier.pred_to_true = pred_to_true
 
     # Tell PyTorch to run the model on GPU
     bert_classifier.to(bert_classifier.device)
