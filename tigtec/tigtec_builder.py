@@ -246,7 +246,7 @@ class tigtec:
                     print("edge " + str(i)+ "-" + str(indx) + ", state : " + str(cf_state_iter) + ", cf candidate: " + str(cf_to_keep_iter) + ", cost: " + str(cost_iter))
                     # print(' '.join(new_reviews_tokenized[k]))
             #       print(' '.join(new_review_tokenized))
-                    print(str(old_token) + str(" -----> ") + str(new_token))
+                    print(str(old_token) + str(" -----> ") + str(new_reviews[k][j]))
                     G_text.add_edge(i, indx)
                     G_text.add_node(indx, text = new_reviews_tokenized[k], 
                                     hist_mask = predecessor_hist_mask_iter, hist_mask_text = predecessor_text_masked_iter, 
