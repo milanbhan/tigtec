@@ -92,11 +92,12 @@ class tigtec:
         
         return(similarity)
     
-    def cf_cost(self, init_review, cf_review) :
+    def cf_cost(self, init_review, cf_review, target) :
         init_pred = self.classifier.predict(init_review)
         cf_pred = self.classifier.predict(cf_review)
         idx_init_state = np.argmax(init_pred)
-        target_cf_state = np.argmin(init_pred)
+        target_cf_state = target
+        # target_cf_state = np.argmin(init_pred)
         cf_state = np.argmax(cf_pred)
         #   score_dist = np.abs(init_pred-cf_pred)[:,0]
         #   score_dist = (init_pred-cf_pred)[:,idx_init_state]
@@ -117,7 +118,7 @@ class tigtec:
         
         return(cost, similarity)
 
-    def replace_token(self, review, to_mask):
+    def replace_token(self, review, to_mask, target):
       
 
         #   #Reconstitution de la review
@@ -141,7 +142,7 @@ class tigtec:
         dist_list = []
         for t in new_tokens :
             #Remplacer iter review par init review pour maximiser la distance par rapport au point de départ
-            cost  = self.cf_cost([old_review], [new_review.replace("[MASK]", t)])[0]
+            cost  = self.cf_cost([old_review], [new_review.replace("[MASK]", t)], target)[0]
             dist_list.append(cost)
         
         #   review_max = np.argmax(dist_list)
@@ -170,11 +171,12 @@ class tigtec:
         
         return(new_reviews, new_reviews_tokenized, token_max, new_tokens_variety)
     
-    def generate_cf(self, review):
+    def generate_cf(self, review, target):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
         init_state = np.argmax(init_pred)
-        target_state = np.argmin(init_pred)
+        target_state = target
+        # target_state = np.argmin(init_pred)
         init_cost = init_pred[0][target_state]
         if self.sentence_similarity is not None :
             init_cost += 1
@@ -223,7 +225,7 @@ class tigtec:
                 predecessor_text_masked_iter = predecessor_text_masked.copy()
                 text_iter = predecessor_text.copy()
 
-                new_reviews, new_reviews_tokenized, old_token, new_tokens = self.replace_token(text_iter,j)
+                new_reviews, new_reviews_tokenized, old_token, new_tokens = self.replace_token(text_iter,j, target_state)
 
                 #Ajout à l'historique des tokens masqués
                 predecessor_text_masked_iter.append(old_token)
@@ -236,7 +238,7 @@ class tigtec:
                     cf_state_iter = np.argmax(cf_pred_iter)
                     cf_to_keep_iter = cf_pred_iter[0][init_state] <= 0.5 - self.margin
 
-                    cost_iter, similarity_iter  = self.cf_cost(review, [new_reviews[k]])
+                    cost_iter, similarity_iter  = self.cf_cost(review, [new_reviews[k]], target_state)
                     #Création des arrêtes et noeuds du graph
                     print("edge " + str(i)+ "-" + str(indx) + ", state : " + str(cf_state_iter) + ", cf candidate: " + str(cf_to_keep_iter) + ", cost: " + str(cost_iter))
             #       print(' '.join(new_review_tokenized))
