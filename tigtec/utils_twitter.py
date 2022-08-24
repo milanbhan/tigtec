@@ -32,6 +32,8 @@ def map(X, func):
 def clean_tweet(tweet) :
     tweet = re.sub(r"\n", " ", tweet)
     tweet = re.sub(r"[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b\S+","",tweet)
+    tweet = re.sub("@[A-Za-z0-9_]+","", tweet)
+    tweet = re.sub("#[A-Za-z0-9_]+","", tweet)
     tweet = re.sub(r"bit.ly\S+", "", tweet)
     tweet = re.sub(r"twitter.com\S+", "", tweet)
     tweet = re.sub(r"@", "", tweet)
