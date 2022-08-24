@@ -11,6 +11,10 @@ import string
 import re
 from langdetect import detect, DetectorFactory
 
+
+import snscrape
+import snscrape.modules.twitter as sntwitter
+
 #Text Processing
 def map(X, func):
         '''
@@ -150,5 +154,22 @@ def filter_and_clean_twitt(df, text:str, target:str, stop_word:list) :
     df[text]= df[text].apply(lambda x : remove_bad_space(x))
     
     return(df)
-        
+
+def scrap_twitter (candidate_list, nb_tweets) :
+    tweets_list1 = []
+    for c in candidate_list :
+        for i,tweet in enumerate(sntwitter.TwitterSearchScraper(f'from:{c}').get_items()): #declare a username 
+            if i>nb_tweets: #number of tweets you want to scrape
+                break
+        tweets_list1.append([tweet.date, tweet.id, tweet.content, tweet.user.username]) #declare the attributes to be returned
+
+    # Creating a dataframe from the tweets list above 
+    tweets_df = pd.DataFrame(tweets_list1, columns=['Datetime', 'Tweet Id', 'Text', 'Username'])
+
+    #Enlever les na
+    tweets_df = tweets_df[tweets_df.Username.isin(candidate_list)]
+    
+    return(tweets_df)
+
+            
 
