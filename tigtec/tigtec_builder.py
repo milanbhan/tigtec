@@ -261,7 +261,7 @@ class tigtec:
                         nb_cf+=1
 
                     #Si on a trouvé assez de cf ou bien si on a  changé tous les mots, on arrête
-                    if nb_cf == self.n | len(predecessor_text_masked_iter) == len(G_text.nodes.data()[0]['text']) :
+                    if nb_cf == self.n | len(predecessor_text_masked_iter) == len(G_text.nodes.data()[0]['text']-1) :
                         break
  
         #Viz cf détectés
