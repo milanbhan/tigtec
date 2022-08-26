@@ -208,7 +208,7 @@ class tigtec:
             predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
             predecessor_text = G_text.nodes.data()[i]['text']
             
-            if (len(predecessor_text_masked_iter) == len(predecessor_hist_mask)) :
+            if (len(text_initial_tokenized) == len(predecessor_hist_mask)) :
                 break
             
             if self.explo_strategy == 'evolutive' :
