@@ -261,27 +261,35 @@ class tigtec:
                         nb_cf+=1
 
                     #Si on a trouvé assez de cf ou bien si on a  changé tous les mots, on arrête
-                    if nb_cf == self.n | len(predecessor_text_masked_iter) == len(G_text.nodes.data()[0]['text']) :
+                    if (nb_cf == self.n) | (len(predecessor_text_masked_iter) == new_reviews_tokenized[k]) :
                         break
  
         #Viz cf détectés
         nodes_result = [x for x in G_text.nodes() if G_text.nodes.data()[x]['cf']]
         change_to_plot_html = []
         cf_list = []
-        for r in nodes_result :
-        #     compute_attribution(text=cf_review, sentiment_model=sentiment_model, tokenizer=tokenizer, attribution=attribution)
-            token_change = attribution_coeff.copy()
-            token_change['Attribution coefficient'] = 0
-            token_change['token'] = G_text.nodes.data()[r]['text']
-            cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
-            cf_token_change = G_text.nodes.data()[r]['hist_mask']
-            token_change.iloc[cf_token_change,1]=1
-            change_to_plot_html.append(plot_change(token_change, n_colors=100))
         
+        if len(nodes_result)>0 :
+            for r in nodes_result :
+            #     compute_attribution(text=cf_review, sentiment_model=sentiment_model, tokenizer=tokenizer, attribution=attribution)
+                token_change = attribution_coeff.copy()
+                token_change['Attribution coefficient'] = 0
+                token_change['token'] = G_text.nodes.data()[r]['text']
+                cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
+                cf_token_change = G_text.nodes.data()[r]['hist_mask']
+                token_change.iloc[cf_token_change,1]=1
+                change_to_plot_html.append(plot_change(token_change, n_colors=100))
+            
+           
+        else :
+            cf_list = []
+            change_to_plot_html = []
+            
         self.graph_cf.append(G_text)
         self.cf_list.append(cf_list)
         self.reviews.append(review)
         self.cf_html_list.append(change_to_plot_html)
+        
         
         return(G_text, cf_list, change_to_plot_html)
     
