@@ -124,6 +124,7 @@ class BertClassifier(nn.Module):
         attribution_coefficient = pd.DataFrame(columns = ["token", "Attribution coefficient"])
         attribution_coefficient['token'] = token_list
         attribution_coefficient['Attribution coefficient'] = random_list
+        attribution_coefficient = attribution_coefficient[attribution_coefficient.token != '[PAD]']
         
         return(attribution_coefficient)
         
