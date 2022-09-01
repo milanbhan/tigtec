@@ -83,6 +83,15 @@ class tigtec:
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
         words = words.split(" ")
+        
+        punct_remove_list = ["#", ",", ";", "!", "?", "'", "." ]
+        
+        for word in words :
+            if (len(word)> 1) & (word[-1] in punct_remove_list) :
+                words.remove(word)
+            else : 
+                pass
+    
         return(words)
     
     def sentence_transformer_similarity(self, text1, text2) :
