@@ -125,6 +125,8 @@ class tigtec:
         old_review = ' '.join(review)
         #Récupération du token devant êtr masqué
         #   token_max = token_attribution.iloc[to_mask,0]
+        print(review)
+        print(to_mask)
         token_max = review[to_mask]
         new_review = review.copy()
         new_review[to_mask] = self.classifier.tokenizer.mask_token
