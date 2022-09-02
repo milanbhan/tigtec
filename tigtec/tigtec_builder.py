@@ -132,8 +132,8 @@ class tigtec:
         old_review = ' '.join(review)
         #Récupération du token devant êtr masqué
         #   token_max = token_attribution.iloc[to_mask,0]
-        print(review)
-        print(to_mask)
+        # print(review)
+        # print(to_mask)
         token_max = review[to_mask]
         new_review = review.copy()
         new_review[to_mask] = self.classifier.tokenizer.mask_token
@@ -236,8 +236,8 @@ class tigtec:
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
             #to do : penser au cas de figure avec des attribution égales
             ind_to_mask = attribution_iter[attribution_iter['token'].isin([".", ",", ";"])==False].nlargest(self.beam_width, 'Attribution coefficient')['token'].index.tolist()
-            print(predecessor_hist_mask)
-            print(wait_list)
+            # print(predecessor_hist_mask)
+            # print(wait_list)
             #Pour chaque token à changer, chacun dans un nouveau noeud
             for j in ind_to_mask :
                 if (nb_cf == self.n) :
