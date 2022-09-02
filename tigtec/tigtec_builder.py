@@ -82,8 +82,8 @@ class tigtec:
         logit  = logits[0, mask_token_index]
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
+        print(words)
         words = words.split(" ")
-        print(self.topk)
         # punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", "."]
         
         # for word in words :
