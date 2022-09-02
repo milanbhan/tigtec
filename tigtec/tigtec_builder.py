@@ -146,7 +146,11 @@ class tigtec:
         
         #si la MLM ne renvoie rien, on refait tourner le MLM en filtrant au-delà de 4 tokens de + que le mask
         if len(new_tokens) == 0 :
-            new_tokens = self.mlm_inference(masked_text=[new_review[0:to_mask + 4]])
+            new_review = review.copy()
+            new_review[to_mask] = self.classifier.tokenizer.mask_token
+            new_review = new_review[0:to_mask + 4]
+            new_review = ' '.join(new_review)
+            new_tokens = self.mlm_inference(masked_text=[new_review])
             
         
         #Suppression du token en train d'être remplacé de la liste de tokens inférée par MLM
