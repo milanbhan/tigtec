@@ -277,6 +277,7 @@ class tigtec:
 
                     wait_list = [(x, G_text.nodes.data()[x]['cost']) for x in G_text.nodes() if G_text.out_degree(x)==0 and G_text.in_degree(x)==1 and G_text.nodes.data()[x]['cf']==False]
                     wait_list.sort(reverse=False, key = lambda tup : tup[1])
+                    print(wait_list)
 
                     #Plot de CF généré avec mise en avant des tokens changés     
                     if cf_to_keep_iter :
