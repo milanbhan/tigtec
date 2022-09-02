@@ -229,7 +229,7 @@ class tigtec:
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
             #to do : penser au cas de figure avec des attribution égales
             ind_to_mask = attribution_iter[attribution_iter['token'].isin([".", ",", ";"])==False].nlargest(self.beam_width, 'Attribution coefficient')['token'].index.tolist()
-
+            print(predecessor_hist_mask)
             #Pour chaque token à changer, chacun dans un nouveau noeud
             for j in ind_to_mask :
                 if (nb_cf == self.n) :
