@@ -84,13 +84,13 @@ class tigtec:
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
         words = words.split(" ")
         
-        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", "."]
+        # punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", "."]
         
-        for word in words :
-            if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
-                words.remove(word)
-            else : 
-                pass
+        # for word in words :
+        #     if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
+        #         words.remove(word)
+        #     else : 
+        #         pass
     
         return(words)
     
