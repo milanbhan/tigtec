@@ -82,16 +82,14 @@ class tigtec:
         logit  = logits[0, mask_token_index]
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
-        print(words)
         words = words.split(" ")
-        # punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", "."]
+        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-"]
         
-        # for word in words :
-        #     if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
-        #         words.remove(word)
-        #     else : 
-        #         pass
-    
+        for word in words :
+            if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
+                words.remove(word)
+            else : 
+                pass
         return(words)
     
     def sentence_transformer_similarity(self, text1, text2) :
@@ -145,6 +143,11 @@ class tigtec:
         #Constitution de la nouvelle review avec le mask, et MLM inférence pour remplacement du mask par le nouveau token
         new_review = ' '.join(new_review)
         new_tokens = self.mlm_inference(masked_text=[new_review])
+        
+        #si la MLM ne renvoie rien, on refait tourner le MLM en filtrant au-delà de 4 tokens de + que le mask
+        if len(new_tokens) == 0 :
+            new_tokens = self.mlm_inference(masked_text=[new_review[0:to_mask + 4]])
+            
         
         #Suppression du token en train d'être remplacé de la liste de tokens inférée par MLM
         if token_max in new_tokens :
