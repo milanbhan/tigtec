@@ -225,6 +225,8 @@ class tigtec:
         nb_cf = 0  
         while nb_cf < self.n :
             i = wait_list[0][0]
+            if (indx == 1000) :
+                    break
             #Récupération historique des tokens masqués et du text du noeud parent
             predecessor_hist_mask = G_text.nodes.data()[i]['hist_mask']
             predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
@@ -247,8 +249,7 @@ class tigtec:
                 if (nb_cf == self.n) :
                     break
                 #Si trop long, on abandonne
-                if (indx > 1000) :
-                    break
+                
         #       indx+=1
                 predecessor_hist_mask_iter = predecessor_hist_mask.copy()
                 predecessor_hist_mask_iter.append(j)
