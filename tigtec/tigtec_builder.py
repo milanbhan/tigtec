@@ -86,10 +86,14 @@ class tigtec:
         punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-"]
         
         for word in words :
-            if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
+            if any(punct in word for punct in punct_remove_list):
                 words.remove(word)
-            else : 
-                pass
+        
+        # for word in words :
+        #     if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
+        #         words.remove(word)
+        #     else : 
+        #         pass
         return(words)
     
     def sentence_transformer_similarity(self, text1, text2) :
