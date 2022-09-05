@@ -242,6 +242,9 @@ class tigtec:
             for j in ind_to_mask :
                 if (nb_cf == self.n) :
                     break
+                #Si trop long, on abandonne
+                if (indx > 1000) :
+                    break
         #       indx+=1
                 predecessor_hist_mask_iter = predecessor_hist_mask.copy()
                 predecessor_hist_mask_iter.append(j)
