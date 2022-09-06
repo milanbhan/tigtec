@@ -83,7 +83,7 @@ class tigtec:
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
         words = words.split(" ")
-        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-"]
+        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "("]
         
         for word in words :
             if any(punct in word for punct in punct_remove_list):
@@ -147,6 +147,7 @@ class tigtec:
         #Constitution de la nouvelle review avec le mask, et MLM inférence pour remplacement du mask par le nouveau token
         new_review = ' '.join(new_review)
         new_tokens = self.mlm_inference(masked_text=[new_review])
+        print([new_review])
         print(new_tokens)
         
         #si la MLM ne renvoie rien, on refait tourner le MLM en filtrant au-delà de 4 tokens de + que le mask
