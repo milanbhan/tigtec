@@ -226,11 +226,10 @@ class tigtec:
         #Premier test : on itère jusqu'à la profondeur max en monde beamsearch
         #   for depth in range(len(text_initial_tokenized)) :
         nb_cf = 0  
-        while nb_cf < self.n :
+        while (nb_cf < self.n | indx <= 1000) :
             i = wait_list[0][0]
             #Si trop long, on abandonne
-            if (indx == 1000) :
-                    break
+
             #Récupération historique des tokens masqués et du text du noeud parent
             predecessor_hist_mask = G_text.nodes.data()[i]['hist_mask']
             predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
