@@ -155,6 +155,7 @@ class tigtec:
             new_review = new_review[0:to_mask + 4]
             new_review = ' '.join(new_review)
             new_tokens = self.mlm_inference(masked_text=[new_review])
+            print(new_tokens)
             
         
         #Suppression du token en train d'être remplacé de la liste de tokens inférée par MLM
