@@ -307,7 +307,7 @@ class tigtec:
                 token_change = attribution_coeff.copy()
                 token_change['Attribution coefficient'] = 0
                 print(token_change['token'])
-                print(G_text.nodes.data()[r]['text'])
+                print(' '.join(G_text.nodes.data()[r]['text']))
                 token_change['token'] = G_text.nodes.data()[r]['text']
                 cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
                 cf_token_change = G_text.nodes.data()[r]['hist_mask']
