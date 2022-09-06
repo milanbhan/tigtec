@@ -309,8 +309,7 @@ class tigtec:
             #     compute_attribution(text=cf_review, sentiment_model=sentiment_model, tokenizer=tokenizer, attribution=attribution)
                 token_change = attribution_coeff.copy()
                 token_change['Attribution coefficient'] = 0
-                print(token_change['token'])
-                print(' '.join(G_text.nodes.data()[r]['text']))
+
                 token_change['token'] = G_text.nodes.data()[r]['text']
                 cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
                 cf_token_change = G_text.nodes.data()[r]['hist_mask']
