@@ -85,9 +85,9 @@ class tigtec:
         words = words.split(" ")
         punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "("]
         
-        for word in words :
-            if any(punct in word for punct in punct_remove_list):
-                words.remove(word)
+        # for word in words :
+        #     if any(punct in word for punct in punct_remove_list):
+        #         words.remove(word)
         
         # for word in words :
         #     if (word[-1] in punct_remove_list) | (word[0] in punct_remove_list) :
