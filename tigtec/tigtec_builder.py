@@ -225,6 +225,7 @@ class tigtec:
         nb_cf = 0  
         while nb_cf < self.n :
             i = wait_list[0][0]
+            #Si trop long, on abandonne
             if (indx == 1000) :
                     break
             #Récupération historique des tokens masqués et du text du noeud parent
@@ -248,7 +249,7 @@ class tigtec:
             for j in ind_to_mask :
                 if (nb_cf == self.n) :
                     break
-                #Si trop long, on abandonne
+                
                 
         #       indx+=1
                 predecessor_hist_mask_iter = predecessor_hist_mask.copy()
@@ -305,6 +306,8 @@ class tigtec:
             #     compute_attribution(text=cf_review, sentiment_model=sentiment_model, tokenizer=tokenizer, attribution=attribution)
                 token_change = attribution_coeff.copy()
                 token_change['Attribution coefficient'] = 0
+                print(token_change['token'])
+                print(G_text.nodes.data()[r]['text'])
                 token_change['token'] = G_text.nodes.data()[r]['text']
                 cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
                 cf_token_change = G_text.nodes.data()[r]['hist_mask']
