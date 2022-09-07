@@ -57,6 +57,8 @@ class tigtec:
         self.sentence_similarity = sentence_similarity
         if sentence_similarity == 'sentence_transformer' :
             self.sentence_transformer = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+        else :
+            self.sentence_transformer = None
         self.topk = topk
         self.mask_variety = mask_variety
         self.margin = margin
@@ -383,6 +385,10 @@ class tigtec:
                         similarity = self.classifier.cls_similarity(init_review, cf_review)
                 
                     else:
+                        if self.sentence_transformer == None :
+                            self.sentence_transformer = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+                        else :
+                            pass
                         similarity = self.sentence_transformer_similarity(init_review, cf_review)
               
                     dist_matrix[i,k] = similarity
