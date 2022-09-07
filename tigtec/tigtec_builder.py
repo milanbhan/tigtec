@@ -350,7 +350,7 @@ class tigtec:
             
         return(avg_bleu_score_list)
     
-    def diversity(self, sentence_similarity:str="cls_embedding", reg_coeff = 1) :
+    def diversity(self, reg_coeff = 1) :
         """compute dpp diversity & average distance between cf
 
         Args:
@@ -379,10 +379,10 @@ class tigtec:
                         pass
                     cf_review = [" ".join(self.graph_cf[idx].nodes.data()[l]['text'])]
                     
-                    if sentence_similarity == "cls_embedding" :  
+                    if self.sentence_similarity == "cls_embedding" :  
                         similarity = self.classifier.cls_similarity(init_review, cf_review)
                 
-                    if sentence_similarity == "sentence_transformer" :
+                    else:
                         similarity = self.sentence_transformer_similarity(init_review, cf_review)
               
                     dist_matrix[i,k] = similarity
