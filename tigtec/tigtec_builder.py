@@ -85,7 +85,7 @@ class tigtec:
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
         words = words.split(" ")
-        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "("]
+        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "(", '"']
         
         for word in words.copy() :
             if any(punct in word for punct in punct_remove_list):
