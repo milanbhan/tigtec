@@ -398,11 +398,11 @@ class tigtec:
             dpp_mat = 1/(dist_matrix[1:, 1:] + reg_coeff)
             det = np.linalg.det(dpp_mat)
             det_list.append(det)
-            #compute average distance between cf
-            avg_dist = sum(dist_matrix[1:, 1:])/dist_matrix[1:, 1:].shape[0]
-            avg_dist_list.append(avg_dist[0])
-        
-        return(det_list, avg_dist_list)
+            # #compute average distance between cf
+            # avg_dist = sum(dist_matrix[1:, 1:])/dist_matrix[1:, 1:].shape[0]
+            # avg_dist_list.append(avg_dist[0])
+        return(det_list)        
+        # return(det_list, avg_dist_list)
 
     def grammatical_accuracy(self, num_beams=5) :
         """assess the grammatical accuracy of the CF generated
