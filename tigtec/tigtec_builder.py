@@ -85,7 +85,7 @@ class tigtec:
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
         words = words.split(" ")
-        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "(", '"']
+        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "(", '"', "/", "@"]
         
         for word in words.copy() :
             if any(punct in word for punct in punct_remove_list):
@@ -289,8 +289,7 @@ class tigtec:
                                     attrib_coeff = attribution_iter.loc[j]['Attribution coefficient'], cost = float(cost_iter), 
                                     similarity = similarity_iter, state = cf_state_iter, cf = cf_to_keep_iter)
 
-                    wait_list = [(x, G_text.nodes.data()[x]['cost']) for x in G_text.nodes() if G_text.out_degree(x)==0 and G_text.in_degree(x)==1 and G_text.nodes.data()[x]['cf']==False]
-                    wait_list.sort(reverse=False, key = lambda tup : tup[1])
+                    
                     # print(wait_list)
 
                     #Plot de CF généré avec mise en avant des tokens changés     
@@ -300,6 +299,9 @@ class tigtec:
                     #Si on a trouvé assez de cf ou bien si on a  changé tous les mots, on arrête
                     if (nb_cf == self.n) | (len(predecessor_text_masked_iter) == new_reviews_tokenized[k]) :
                         break
+                    
+                    wait_list = [(x, G_text.nodes.data()[x]['cost']) for x in G_text.nodes() if G_text.out_degree(x)==0 and G_text.in_degree(x)==1 and G_text.nodes.data()[x]['cf']==False]
+                    wait_list.sort(reverse=False, key = lambda tup : tup[1])
  
         #Viz cf détectés
         nodes_result = [x for x in G_text.nodes() if G_text.nodes.data()[x]['cf']]
