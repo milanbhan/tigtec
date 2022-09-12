@@ -315,15 +315,15 @@ class tigtec:
                 token_change['Attribution coefficient'] = 0
                 try :
                     token_change['token'] = G_text.nodes.data()[r]['text']
+                    cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
+                    cf_token_change = G_text.nodes.data()[r]['hist_mask']
+                    token_change.iloc[cf_token_change,1]=1
+                    change_to_plot_html.append(plot_change(token_change, n_colors=100))
                 except :
                     print("exception:  ")
                     print(token_change['token'])
                     print(G_text.nodes.data()[r]['text'])
-                token_change['token'] = G_text.nodes.data()[r]['text']
-                cf_list.append(' '.join(G_text.nodes.data()[r]['text']))
-                cf_token_change = G_text.nodes.data()[r]['hist_mask']
-                token_change.iloc[cf_token_change,1]=1
-                change_to_plot_html.append(plot_change(token_change, n_colors=100))
+                
             
            
         else :
