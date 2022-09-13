@@ -321,7 +321,7 @@ class tigtec:
                     change_to_plot_html.append(plot_change(token_change, n_colors=100))
                 except :
                     print("exception:  ")
-                    print(token_change['token'])
+                    print([t for t in token_change['token']])
                     print(G_text.nodes.data()[r]['text'])
                 
             
