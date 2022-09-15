@@ -243,6 +243,7 @@ class tigtec:
             
             if self.explo_strategy == 'evolutive' :
                 attribution_coeff = self.classifier.compute_token_importance(text=[' '.join(predecessor_text)])
+                print("nombre de ligne attribution coeff :  " + str(attribution_coeff.shape[0]))
             
             #On filtre l'attribution en enlevant les tokens déjà masqués/remplacés
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
@@ -283,6 +284,7 @@ class tigtec:
                     # print(' '.join(new_reviews_tokenized[k]))
             #       print(' '.join(new_review_tokenized))
                     print(str(old_token) + str(" -----> ") + str(new_reviews_tokenized[k][j]))
+                    print(len())
                     G_text.add_edge(i, indx)
                     G_text.add_node(indx, text = new_reviews_tokenized[k], 
                                     hist_mask = predecessor_hist_mask_iter, hist_mask_text = predecessor_text_masked_iter, 
