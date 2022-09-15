@@ -244,7 +244,6 @@ class tigtec:
             
             if self.explo_strategy == 'evolutive' :
                 attribution_coeff = self.classifier.compute_token_importance(text=[' '.join(predecessor_text)])
-                print("nombre de ligne attribution coeff :  " + str(attribution_coeff.shape[0]))
             
             #On filtre l'attribution en enlevant les tokens déjà masqués/remplacés
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
