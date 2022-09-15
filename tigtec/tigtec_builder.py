@@ -218,7 +218,8 @@ class tigtec:
         #   token_list_encoded = [t for t in tokenizer.encode(review[0]) if t not in [101, 102, 103]]
         
         #Initialisation du graph basé sur le text initial
-        attribution_coeff = self.classifier.compute_token_importance(text=cf_review, method = method)
+        attribution_coeff_init = self.classifier.compute_token_importance(text=cf_review, method = method)
+        attribution_coeff = attribution_coeff_init.copy()
         text_initial_tokenized = attribution_coeff['token'].tolist()
         #   text_initial_tokenized = [tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         G_text = nx.DiGraph()
@@ -312,7 +313,7 @@ class tigtec:
         if len(nodes_result)>0 :
             for r in nodes_result :
             #     compute_attribution(text=cf_review, sentiment_model=sentiment_model, tokenizer=tokenizer, attribution=attribution)
-                token_change = attribution_coeff.copy()
+                token_change = attribution_coeff_init.copy()
                 token_change['Attribution coefficient'] = 0
                 try :
                     token_change['token'] = G_text.nodes.data()[r]['text']
