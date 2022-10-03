@@ -400,7 +400,7 @@ class tigtec:
                             pass
                         similarity = self.sentence_transformer_similarity(init_review, cf_review)
               
-                    dist_matrix[i,k] = similarity
+                    dist_matrix[i,k] = (1-similarity)/2
         
             #computing dpp matrix & determinant
             dpp_mat = 1/(dist_matrix[1:, 1:] + reg_coeff)
