@@ -100,10 +100,16 @@ class tigtec:
     
     def sentence_transformer_similarity(self, text1, text2) :
         sentences = text1 + text2
-        embeddings = self.sentence_transformer.encode(sentences)
-        similarity = 1 - spatial.distance.cosine(embeddings[0], embeddings[1])
         
-        return(similarity)
+        if self.sentence_transformer == None :
+            sentence_transformer =  SentenceTransformer('paraphrase-MiniLM-L6-v2')
+            embeddings = sentence_transformer.encode(sentences)
+            similarity = 1 - spatial.distance.cosine(embeddings[0], embeddings[1])
+        else :
+            embeddings = self.sentence_transformer.encode(sentences)
+            similarity = 1 - spatial.distance.cosine(embeddings[0], embeddings[1])
+        
+        return(similarity)    
     
     def cf_cost(self, init_review, cf_review, target) :
         init_pred = self.classifier.predict(init_review)
@@ -358,6 +364,20 @@ class tigtec:
             
         return(avg_bleu_score_list)
     
+    def text_similarit(self, sentence_similarity = "sentence_transformer") :
+        """ sentence_similarity (str, optional): _description_. Defaults to "sentence_transformer".
+        """
+        similarity_list= []
+        for idx in range(len(self.graph_cf)) :
+            if sentence_similarity == "cls_embedding" :
+                cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
+            similarity = self.classifier.cls_similarity(init_review, cf_review)
+            
+        if self.sentence_similarity == "sentence_transformer" :
+            similarity += self.sentence_transformer_similarity(init_review, cf_review)
+            
+        return(similarity)
+
     def success_rate(self) :
         """compute success rate : number of cf founded over number of cf targeted
 
