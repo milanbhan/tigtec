@@ -198,7 +198,7 @@ class tigtec:
         
         return(new_reviews, new_reviews_tokenized, token_max, new_tokens_variety)
     
-    def generate_cf(self, review, target):
+    def generate_cf(self, review, target, indx_max = 1000):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
         nb_class = init_pred.shape[1]
@@ -230,7 +230,7 @@ class tigtec:
         #Premier test : on itère jusqu'à la profondeur max en monde beamsearch
         #   for depth in range(len(text_initial_tokenized)) :
         nb_cf = 0  
-        while (nb_cf < self.n) & (indx <= 1000) :
+        while (nb_cf < self.n) & (indx <= indx_max) :
             i = wait_list[0][0]
             #Si trop long, on abandonne
 
