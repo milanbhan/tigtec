@@ -98,11 +98,12 @@ class tigtec:
         #         pass
         return(words)
     
-    def sentence_transformer_similarity(self, text1, text2) :
+    def sentence_transformer_similarity(self, text1, text2, sentence_transformer = None) :
         sentences = text1 + text2
         
         if self.sentence_transformer == None :
-            sentence_transformer =  SentenceTransformer('paraphrase-MiniLM-L6-v2')
+            if sentence_transformer == None :
+                raise Exception("Sorry, no Sentence transformer in the class or in the parameters")
             embeddings = sentence_transformer.encode(sentences)
             similarity = 1 - spatial.distance.cosine(embeddings[0], embeddings[1])
         else :
@@ -364,19 +365,24 @@ class tigtec:
             
         return(avg_bleu_score_list)
     
-    def text_similarit(self, sentence_similarity = "sentence_transformer") :
+    def text_similarity(self, sentence_similarity = "sentence_transformer", sentence_transformer = None) :
         """ sentence_similarity (str, optional): _description_. Defaults to "sentence_transformer".
         """
         similarity_list= []
         for idx in range(len(self.graph_cf)) :
-            if sentence_similarity == "cls_embedding" :
-                cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
-            similarity = self.classifier.cls_similarity(init_review, cf_review)
-            
-        if self.sentence_similarity == "sentence_transformer" :
-            similarity += self.sentence_transformer_similarity(init_review, cf_review)
-            
-        return(similarity)
+            similarity_iter = []
+            init_review =  [' '.join(self.graph_cf[idx].nodes.data()[0]['text'])]
+            cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
+            for n in cf_nodes :
+                cf_review = [' '.join(self.graph_cf[idx].nodes.data()[n]['text'])]
+                if sentence_similarity == "cls_embedding" :
+                    similarity = self.classifier.cls_similarity(init_review, cf_review)
+                    similarity_iter.append(similarity)
+                else :
+                    similarity = self.sentence_transformer_similarity(init_review, cf_review, sentence_transformer)
+                    similarity_iter.append(similarity)
+            similarity_list.append(np.mean(similarity_iter))
+        return(similarity_list)
 
     def success_rate(self) :
         """compute success rate : number of cf founded over number of cf targeted
