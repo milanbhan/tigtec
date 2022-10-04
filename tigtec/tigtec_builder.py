@@ -384,6 +384,23 @@ class tigtec:
             similarity_list.append(np.mean(similarity_iter))
         return(similarity_list)
 
+    def token_change_rate(self) :
+        """compute token change rate : number of cf token change over total number of tokens
+
+        Args:
+            None
+        """
+
+        token_cr_list = []
+        for idx in range(len(self.graph_cf)) :
+            token_cr_iter = []
+            cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
+            for n in cf_nodes :
+                cr = len(cf.graph_cf[idx].nodes.data()[n]['hist_mask']) / len(cf.graph_cf[idx].nodes.data()[n]['text'])
+                token_cr_iter.append(cr)
+            token_cr_list.append(np.mean(token_cr_iter))
+        return(token_cr_list)
+    
     def success_rate(self) :
         """compute success rate : number of cf founded over number of cf targeted
 
