@@ -253,7 +253,7 @@ class tigtec:
             # print(wait_list)
             #Pour chaque token à changer, chacun dans un nouveau noeud
             for j in ind_to_mask :
-                if (nb_cf == self.n) :
+                if ((nb_cf == self.n) | (indx <= indx_max)) :
                     break
                 
                 
@@ -268,9 +268,9 @@ class tigtec:
                 #Ajout à l'historique des tokens masqués
                 predecessor_text_masked_iter.append(old_token)
                 for k in range(len(new_reviews)) :
-                    if (nb_cf == self.n) :
-                        break
                     indx+=1
+                    if ((nb_cf == self.n) | (indx <= indx_max)) :
+                        break
                     #Nouvelle prédiction
                     cf_pred_iter = self.classifier.predict([new_reviews[k]])
                     cf_state_iter = np.argmax(cf_pred_iter)
