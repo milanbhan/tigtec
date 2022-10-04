@@ -392,6 +392,9 @@ class tigtec:
         """
 
         token_cr_list = []
+        if len(self.graph_cf) == 0 :
+            raise Exception("Sorry, no cf computed yet")
+        
         for idx in range(len(self.graph_cf)) :
             token_cr_iter = []
             cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
