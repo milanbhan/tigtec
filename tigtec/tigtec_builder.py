@@ -367,7 +367,7 @@ class tigtec:
 
         success_rate_list = []
         for idx in range(len(self.graph_cf)) :
-            cf_nodes = [x for x in self.graph_cf.nodes() if self.graph_cf.data()[x]['cf']]
+            cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].data()[x]['cf']]
             success_rate = len(cf_nodes) / self.n
             success_rate_list.append(success_rate)
         return(success_rate_list)
