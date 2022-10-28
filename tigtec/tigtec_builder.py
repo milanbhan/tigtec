@@ -548,6 +548,7 @@ class tigtec:
                 nlls.append(neg_log_likelihood)
 
             ppl = torch.exp(torch.stack(nlls).sum() / end_loc)
+            print(ppl)
             ppl_list.append(ppl)
         
         return(ppl_list)
