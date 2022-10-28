@@ -529,7 +529,7 @@ class tigtec:
             text =  " \n\n ".join([" \n\n ".join(cf) for cf in self.cf_list[idx]])
             
             encodings = tokenizer(text, return_tensors="pt")
-            print((encodings))
+            print(len(encodings[0]))
             max_length = model.config.n_positions
 
             nlls = []
