@@ -98,6 +98,10 @@ class tigtec:
         #         pass
         return(words)
     
+    def set_graph_cf(self, graph_cf) :
+        self.graph_cf = graph_cf
+        
+    
     def sentence_transformer_similarity(self, text1, text2, sentence_transformer = None) :
         sentences = text1 + text2
         
