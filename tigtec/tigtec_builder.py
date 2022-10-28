@@ -406,7 +406,7 @@ class tigtec:
             token_cr_iter = []
             cf_nodes = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
             for n in cf_nodes :
-                cr = len(cf.graph_cf[idx].nodes.data()[n]['hist_mask']) / len(cf.graph_cf[idx].nodes.data()[n]['text'])
+                cr = len(self.graph_cf[idx].nodes.data()[n]['hist_mask']) / len(cf.graph_cf[idx].nodes.data()[n]['text'])
                 token_cr_iter.append(cr)
             token_cr_list.append(np.mean(token_cr_iter))
         return(token_cr_list)
