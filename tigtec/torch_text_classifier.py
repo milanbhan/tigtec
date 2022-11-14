@@ -115,7 +115,7 @@ class BertClassifier(nn.Module):
     
     
     def random_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103], self.max_len]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer, self.max_len)[0].tolist()[0] if t not in [101, 102, 103]]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         random_list = [random.uniform(0, 1) for t in token_list_encoded]
@@ -130,7 +130,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
         
     def lime_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [0,101, 102, 103], self.max_len]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer, self.max_len)[0].tolist()[0] if t not in [0,101, 102, 103]]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         text_lime = ' '.join(token_list)
@@ -186,7 +186,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
     
     def shap_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103], self.max_len]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer, self.max_len)[0].tolist()[0] if t not in [101, 102, 103]]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         text_shap = ' '.join(token_list)
