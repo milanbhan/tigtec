@@ -45,7 +45,7 @@ import nltk
 class BertClassifier(nn.Module):
     """DistillBert Model for Classification Tasks.
     """
-    def __init__(self, nb_class, tokenizer, model='distilbert' , freeze_bert=False):
+    def __init__(self, nb_class, tokenizer, model='distilbert' , freeze_bert=False, max_len = 68):
         """
         @param    model: a BertModel object : DistilBertModel or BERTModel
         @param    classifier: a torch.nn.Module classifier
@@ -88,6 +88,7 @@ class BertClassifier(nn.Module):
         self.tokenizer = tokenizer
         self.true_to_pred = {}
         self.pred_to_true = {}
+        self.max_len = max_len
 
         # Instantiate an one-layer feed-forward classifier
         self.classifier = nn.Sequential(
@@ -114,7 +115,7 @@ class BertClassifier(nn.Module):
     
     
     def random_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103]]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103], self.max_len]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         random_list = [random.uniform(0, 1) for t in token_list_encoded]
@@ -129,7 +130,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
         
     def lime_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [0,101, 102, 103]]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [0,101, 102, 103], self.max_len]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         text_lime = ' '.join(token_list)
@@ -154,7 +155,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
     
     def attention_token_importance(self, text):
-        input, mask = preprocessing_for_bert(text, self.tokenizer)
+        input, mask = preprocessing_for_bert(text, self.tokenizer, self.max_len)
         encoded_att = self.bert(input,attention_mask =mask)
         last_attention=encoded_att.attentions[-1]
 
@@ -185,7 +186,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
     
     def shap_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103]]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer)[0].tolist()[0] if t not in [101, 102, 103], self.max_len]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         text_shap = ' '.join(token_list)
