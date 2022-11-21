@@ -85,7 +85,7 @@ class tigtec:
         predicted_tokens_id = torch.topk(logit.flatten(), self.topk).indices
         words = self.classifier.tokenizer.decode(predicted_tokens_id)
         words = words.split(" ")
-        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "(", '"', "/", "@"]
+        punct_remove_list = ["#", ",", ";", "!", "?", "'", ".", ".", "-", "&", ")", "(", '"', "/", "@", "’"]
         
         for word in words.copy() :
             if any(punct in word for punct in punct_remove_list):
@@ -551,7 +551,7 @@ class tigtec:
             print(str(idx) + " : " + str(float(ppl)))
             ppl_list.append(ppl)
         
-        return(ppl_list)
+        return([p.cpu().numpy() for p in ppl_list])
     
     def loss(self, stride = 64):
         bleu_score = np.mean(self.bleu_score())
