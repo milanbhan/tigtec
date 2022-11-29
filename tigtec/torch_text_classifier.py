@@ -88,12 +88,13 @@ class BertClassifier(nn.Module):
         elif model == 'BERT_text_attack':
             sentiment_model = AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
             self.bert = sentiment_model.bert
+            self.classifier = sentiment_model.classifier
         
         self.tokenizer = tokenizer
         self.true_to_pred = {}
         self.pred_to_true = {}
         self.max_len = max_len
-        self.classifier = sentiment_model.classifier
+        
         
         # Instantiate an one-layer feed-forward classifier
         
