@@ -30,7 +30,7 @@ import networkx as nx
 
 #nlp library fom BLEU score
 import nltk
-
+from transformers import DistilBertTokenizer
 
 #colour function on torch_text_classifier
 from  tigtec.torch_text_classifier import plot_change
@@ -65,6 +65,9 @@ class tigtec:
         self.beam_width = beam_width
         self.alpha = alpha
         
+        if self.classifier.bert.name_or_path == 'textattack/bert-base-uncased-imdb':
+            self.tokenizer_mask = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
+        
         #List of cf & cf informations
         self.graph_cf = []
         self.cf_list = []
@@ -72,7 +75,10 @@ class tigtec:
         self.reviews = []
         
     def mlm_inference(self, masked_text) :
-        inputs = self.classifier.tokenizer(masked_text, return_tensors='pt')
+        if self.classifier.bert.name_or_path == 'textattack/bert-base-uncased-imdb':
+            inputs = self.tokenizer_mask(masked_text, return_tensors='pt')
+        else :     
+            inputs = self.classifier.tokenizer(masked_text, return_tensors='pt')
   
         with torch.no_grad():
             logits = self.mlm(**inputs).logits
