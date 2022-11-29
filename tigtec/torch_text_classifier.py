@@ -297,7 +297,7 @@ class BertClassifier(nn.Module):
         
         
         if self.bert.name_or_path == 'textattack/bert-base-uncased-imdb' :
-            last_hidden_state_cls = outputs[1][:, 0, :]
+            last_hidden_state_cls = outputs[1]
         else :
             last_hidden_state_cls = outputs[0][:, 0, :]
 
