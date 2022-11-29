@@ -20,7 +20,7 @@ import seaborn as sns
 #NLP/DL librarie
 #Transformers
 import transformers
-from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig, FlaubertTokenizer, FlaubertModel, CamembertTokenizer, CamembertModel, CamembertForMaskedLM
+from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig, FlaubertTokenizer, FlaubertModel, CamembertTokenizer, CamembertModel, CamembertForMaskedLM, AutoModelForSequenceClassification
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 
@@ -85,21 +85,28 @@ class BertClassifier(nn.Module):
                                                     output_attentions = True, 
                                                     return_dict = True,
                                                     output_hidden_states = False)
+        elif model == 'BERT_text_attack':
+            sentiment_model = AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
+            self.bert = sentiment_model.bert
+        
         self.tokenizer = tokenizer
         self.true_to_pred = {}
         self.pred_to_true = {}
         self.max_len = max_len
-
+        self.classifier = sentiment_model.classifier
+        
         # Instantiate an one-layer feed-forward classifier
-        self.classifier = nn.Sequential(
-              nn.Linear(D_in, D_out)
-#             nn.Linear(D_in, H),
-#             nn.ReLU(),
-#             #nn.Dropout(0.5),
-#             nn.Linear(H, D_out)
-        )
+        
+        if model != 'BERT_text_attack':
+            self.classifier = nn.Sequential(
+                nn.Linear(D_in, D_out)
+    #             nn.Linear(D_in, H),
+    #             nn.ReLU(),
+    #             #nn.Dropout(0.5),
+    #             nn.Linear(H, D_out)
+            )
 
-        # Freeze the DistillBERT model
+        # Freeze the BERT model
         if freeze_bert:
             for param in self.bert.parameters():
                 param.requires_grad = False
