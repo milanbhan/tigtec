@@ -182,10 +182,10 @@ class BertClassifier(nn.Module):
                     attentions.append(att.detach().numpy())
             attention_all_head=pd.DataFrame({"Token":tokens,"Attribution coefficient":attentions})
             # attention_all_head_mean = attention_all_head.groupby("Token").agg('mean').reset_index()
-            attention_all_head_mean['id'] = attention_all_head_mean['Token'].apply(lambda t : int(t.split("_")[1]))
-            attention_all_head_mean['token'] = attention_all_head_mean['Token'].apply(lambda t : t.split("_")[0])
-            attention_all_head_mean = (attention_all_head_mean.sort_values("id")).reset_index(drop=True)
-            attribution_coefficient = attention_all_head_mean
+            attention_all_head['id'] = attention_all_head['Token'].apply(lambda t : int(t.split("_")[1]))
+            attention_all_head['token'] = attention_all_head['Token'].apply(lambda t : t.split("_")[0])
+            attention_all_head = (attention_all_head.sort_values("id")).reset_index(drop=True)
+            attribution_coefficient = attention_all_head
 
         else :
             for head in range(0,12) :
