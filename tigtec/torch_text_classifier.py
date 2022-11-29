@@ -180,7 +180,7 @@ class BertClassifier(nn.Module):
                     att = last_attention_mean[i]
                     tokens.append(self.tokenizer.decode([elt]) + '_' + str(i))
                     attentions.append(att.detach().numpy())
-            attribution_coefficient=pd.DataFrame({"Token":tokens,"Attribution coefficient":attentions})
+            attribution_coefficient=pd.DataFrame({"token":tokens,"Attribution coefficient":attentions})
 
         else :
             for head in range(0,12) :
