@@ -172,28 +172,37 @@ class BertClassifier(nn.Module):
         last_attention=encoded_att.attentions[-1]
 
         tokens,attentions = [], []
-        for head in range(0,12) :
+        #si le model ne classifie pas avec le token de classification lors du forward, on fait la moyenne des coeff de la dernière couche
+        if self.bert.name_or_path == 'textattack/bert-base-uncased-imdb' :
+            last_attention_mean = last_attention[0].mean(axis=0).mean(axis=0)
             for i, elt in enumerate(input[0]):
-                #Ne pas prendre les éléments masqués
-                #!=0 car on ne prend pas les tokens padding
-
                 if elt.numpy() != self.tokenizer.pad_token_id:
-                    #Sélection du coefficient d'attention associé,
-                    #premier coefficient 0 pour ids1
-                    #Dernier coefficient 0 = indice de l'objet de la classif par défault 
-                    att = last_attention[0,head][0][i].item()
-
+                    att = last_attention_mean[i]
                     tokens.append(self.tokenizer.decode([elt]) + '_' + str(i))
-                    attentions.append(att)
+                    attentions.append(att.detach().numpy())
+            attention_all_head=pd.DataFrame({"Token":tokens,"Attribution coefficient":attentions})
 
+        else :
+            for head in range(0,12) :
+                for i, elt in enumerate(input[0]):
+                    #Ne pas prendre les éléments masqués
+                    #!=0 car on ne prend pas les tokens padding
 
-        attention_all_head=pd.DataFrame({"Token":tokens,"Attribution coefficient":attentions})
+                    if elt.numpy() != self.tokenizer.pad_token_id:
+                        #Sélection du coefficient d'attention associé,
+                        #premier coefficient 0 pour ids1
+                        #Dernier coefficient 0 = indice de l'objet de la classif par défault 
+                        att = last_attention[0,head][0][i].item()
 
-        attention_all_head_mean = attention_all_head.groupby("Token").agg('mean').reset_index()
-        attention_all_head_mean['id'] = attention_all_head_mean['Token'].apply(lambda t : int(t.split("_")[1]))
-        attention_all_head_mean['token'] = attention_all_head_mean['Token'].apply(lambda t : t.split("_")[0])
-        attention_all_head_mean = (attention_all_head_mean.sort_values("id")).reset_index(drop=True)
-        attribution_coefficient = attention_all_head_mean
+                        tokens.append(self.tokenizer.decode([elt]) + '_' + str(i))
+                        attentions.append(att)
+
+            attention_all_head=pd.DataFrame({"Token":tokens,"Attribution coefficient":attentions})
+            attention_all_head_mean = attention_all_head.groupby("Token").agg('mean').reset_index()
+            attention_all_head_mean['id'] = attention_all_head_mean['Token'].apply(lambda t : int(t.split("_")[1]))
+            attention_all_head_mean['token'] = attention_all_head_mean['Token'].apply(lambda t : t.split("_")[0])
+            attention_all_head_mean = (attention_all_head_mean.sort_values("id")).reset_index(drop=True)
+            attribution_coefficient = attention_all_head_mean
         
         return(attribution_coefficient)
     
