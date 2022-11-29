@@ -99,14 +99,14 @@ class BertClassifier(nn.Module):
         
         # Instantiate an one-layer feed-forward classifier
         
-        if model != 'BERT_text_attack':
-            self.classifier = nn.Sequential(
-                nn.Linear(D_in, D_out)
-    #             nn.Linear(D_in, H),
-    #             nn.ReLU(),
-    #             #nn.Dropout(0.5),
-    #             nn.Linear(H, D_out)
-            )
+    #     if model != 'BERT_text_attack':
+    #         self.classifier = nn.Sequential(
+    #             nn.Linear(D_in, D_out)
+    # #             nn.Linear(D_in, H),
+    # #             nn.ReLU(),
+    # #             #nn.Dropout(0.5),
+    # #             nn.Linear(H, D_out)
+    #         )
 
         # Freeze the BERT model
         if freeze_bert:
