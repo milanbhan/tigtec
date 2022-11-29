@@ -86,10 +86,10 @@ class BertClassifier(nn.Module):
                                                     return_dict = True,
                                                     output_hidden_states = False)
         elif model == 'BERT_text_attack':
-            self = AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
-            # sentiment_model = AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
-            # self.bert = sentiment_model.bert
-            # self.classifier = sentiment_model.classifier
+            # self = AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
+            sentiment_model = AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
+            self.bert = sentiment_model.bert
+            self.classifier = sentiment_model.classifier
         
         self.tokenizer = tokenizer
         self.true_to_pred = {}
