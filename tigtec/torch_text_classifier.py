@@ -184,8 +184,8 @@ class BertClassifier(nn.Module):
             # attention_all_head_mean = attention_all_head.groupby("Token").agg('mean').reset_index()
             attention_all_head['id'] = attention_all_head['Token'].apply(lambda t : int(t.split("_")[1]))
             attention_all_head['token'] = attention_all_head['Token'].apply(lambda t : t.split("_")[0])
-            attention_all_head = attention_all_head['Attribution coefficient'].astype('float')
             attention_all_head['Attribution coefficient'] = (attention_all_head.sort_values("id")).reset_index(drop=True)
+            attention_all_head = attention_all_head['Attribution coefficient'].astype('float')
             attribution_coefficient = attention_all_head
 
         else :
