@@ -99,14 +99,14 @@ class BertClassifier(nn.Module):
         
         # Instantiate an one-layer feed-forward classifier
         
-    #     if model != 'BERT_text_attack':
-    #         self.classifier = nn.Sequential(
-    #             nn.Linear(D_in, D_out)
-    # #             nn.Linear(D_in, H),
-    # #             nn.ReLU(),
-    # #             #nn.Dropout(0.5),
-    # #             nn.Linear(H, D_out)
-    #         )
+        if model != 'BERT_text_attack':
+            self.classifier = nn.Sequential(
+                nn.Linear(D_in, D_out)
+    #             nn.Linear(D_in, H),
+    #             nn.ReLU(),
+    #             #nn.Dropout(0.5),
+    #             nn.Linear(H, D_out)
+            )
 
         # Freeze the BERT model
         if freeze_bert:
@@ -117,7 +117,7 @@ class BertClassifier(nn.Module):
         input, mask = preprocessing_for_bert(text, self.tokenizer)
 
         with torch.no_grad():
-                    logits = self(input, mask)
+            logits = self(input, mask)
         probs = F.softmax(logits, dim=1).cpu().numpy()
         
         return(probs)
@@ -294,7 +294,12 @@ class BertClassifier(nn.Module):
                             attention_mask=attention_mask)
         
         # Extract the last hidden state of the token `[CLS]` for classification task
-        last_hidden_state_cls = outputs[0][:, 0, :]
+        
+        
+        if self.bert.name_or_path == 'textattack/bert-base-uncased-imdb' :
+            last_hidden_state_cls = outputs[1][:, 0, :]
+        else :
+            last_hidden_state_cls = outputs[0][:, 0, :]
 
         # Feed input to classifier to compute logits
         logits = self.classifier(last_hidden_state_cls)
