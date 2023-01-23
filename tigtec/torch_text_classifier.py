@@ -143,10 +143,23 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
         
     def intergrated_gradient_token_importance(self, text):
+        # inputs = self.tokenizer.batch_encode_plus(
+        #     text,  # Preprocess sentence,
+        #     truncation=True,
+        #     add_special_tokens=True,        # Add `[CLS]` and `[SEP]`
+        #     max_length=self.max_len,                  # Max length to truncate/pad
+        #     padding='max_length',         # Pad sentence to max length
+        #     #return_tensors='pt',           # Return PyTorch tensor
+        #     )
+        
+        # # Convert lists to tensors
+        # tokenized=torch.tensor(inputs["input_ids"])
+        # attention_mask=torch.tensor(inputs["attention_mask"])
+            
         layer = self.bert.embeddings
         
         def ig_forward(inputs):
-            return(self.bert(inputs).logits)
+            return(self.bert(inputs["input_ids"], inputs["attention_mask"]).logits)
         
         ig = LayerIntegratedGradients(ig_forward, layer)
         true_class = np.argmax(self.predict(text))
