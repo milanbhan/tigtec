@@ -144,7 +144,11 @@ class BertClassifier(nn.Module):
         
     def intergrated_gradient_token_importance(self, text):
         layer = self.bert.embeddings
-        ig = LayerIntegratedGradients(self.ig_forward, layer)
+        
+        def ig_forward(inputs):
+            return(self.bert(inputs).logits)
+        
+        ig = LayerIntegratedGradients(ig_forward, layer)
         true_class = np.argmax(self.predict(text))
         input_ids, base_ids = ig_encodings(text)
         attrs, delta = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=True)
@@ -623,14 +627,6 @@ def ig_encodings(tokenizer, text):
     base_ids[-1] = sep_id
     return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
 
-def ig_forward(self, inputs):
-    """Function to pr
-
-    Args:
-        model (_type_): instance of the BERTCLassifier class
-        inputs (_type_): ouût of tokenization
-    """
-    return(self.bert(inputs).logits)
 
 def get_palette(theme="YlOrBr", n_colors=1000):
     pal = sns.color_palette(theme, as_cmap=False, n_colors=n_colors)
