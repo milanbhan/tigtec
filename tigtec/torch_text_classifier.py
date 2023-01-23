@@ -34,7 +34,8 @@ from torch.utils.data import TensorDataset, DataLoader, RandomSampler, Sequentia
 # import shap
 import lime
 from lime.lime_text import LimeTextExplainer
-
+from captum.attr import LayerIntegratedGradients
+from captum.attr import visualization as viz
 #graph library
 import networkx as nx
 
@@ -141,6 +142,17 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
         
+    def intergrated_gradient_token_importance(self, text):
+        layer = self.model.bert.embeddings
+        ig = LayerIntegratedGradients(self.ig_forward, layer)
+        true_class = np.argmax(self.predict(text))
+        input_ids, base_ids = ig_encodings(text)
+        attrs, delta = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=True)
+        scores = attrs.sum(dim=-1)
+        scores = (scores - scores.mean()) / scores.norm()
+        return(scores)
+
+    
     def lime_token_importance(self, text):
         token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer, self.max_len)[0].tolist()[0] if t not in [0,101, 102, 103]]
         token_list_encoded
@@ -591,6 +603,34 @@ def evaluate(model, val_dataloader, loss_fn = nn.CrossEntropyLoss()):
     val_accuracy = np.mean(val_accuracy)
 
     return val_loss, val_accuracy
+
+def ig_encodings(tokenizer, text):
+    """Function to process text in order to compute integrated gradient
+
+    Args:
+        tokenizer (_type_): transformer tokenizer
+        text (_type_): text to explain
+
+    Returns:
+        _type_: _description_
+    """
+    pad_id = tokenizer.pad_token_id
+    cls_id = tokenizer.cls_token_id
+    sep_id = tokenizer.sep_token_id
+    input_ids = tokenizer.encode(text, add_special_tokens=True)
+    base_ids = [pad_id] * len(input_ids)
+    base_ids[0] =  cls_id
+    base_ids[-1] = sep_id
+    return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
+
+def ig_forward(self, inputs):
+    """Function to pr
+
+    Args:
+        model (_type_): instance of the BERTCLassifier class
+        inputs (_type_): ouût of tokenization
+    """
+    return(self.bert(inputs).logits)
 
 def get_palette(theme="YlOrBr", n_colors=1000):
     pal = sns.color_palette(theme, as_cmap=False, n_colors=n_colors)
