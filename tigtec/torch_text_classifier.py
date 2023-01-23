@@ -143,7 +143,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
         
     def intergrated_gradient_token_importance(self, text):
-        layer = self.model.bert.embeddings
+        layer = self.bert.embeddings
         ig = LayerIntegratedGradients(self.ig_forward, layer)
         true_class = np.argmax(self.predict(text))
         input_ids, base_ids = ig_encodings(text)
