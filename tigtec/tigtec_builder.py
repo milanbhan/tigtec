@@ -481,6 +481,7 @@ class tigtec:
             # avg_dist_list.append(avg_dist[0])
         return(det_list)        
         # return(det_list, avg_dist_list)
+        #test modif
 
     def grammatical_accuracy(self, num_beams=5) :
         """assess the grammatical accuracy of the CF generated

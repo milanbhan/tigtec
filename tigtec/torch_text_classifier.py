@@ -31,7 +31,7 @@ import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
 #XAI libraries
-# import shap
+import shap
 import lime
 from lime.lime_text import LimeTextExplainer
 from captum.attr import LayerIntegratedGradients
@@ -164,7 +164,7 @@ class BertClassifier(nn.Module):
         ig = LayerIntegratedGradients(self.forward, layer)
         true_class = np.argmax(self.predict(text))
         input_ids, base_ids = ig_encodings(self.tokenizer, text)
-        attrs, delta = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=True)
+        attrs, delta = ig.attribute(inputs["input_ids"], inputs["attention_mask"], base_ids, target=true_class, return_convergence_delta=True)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
         return(scores)
