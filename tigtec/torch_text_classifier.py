@@ -31,7 +31,7 @@ import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
 #XAI libraries
-# import shap
+import shap
 import lime
 from lime.lime_text import LimeTextExplainer
 from captum.attr import LayerIntegratedGradients
