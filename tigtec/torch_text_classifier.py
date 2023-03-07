@@ -274,7 +274,7 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
     
-    def compute_token_importance(self, text, method:str="attention"):
+    def compute_token_importance(self, text, method:str="attention", base='pad'):
         if method == 'random' :
             attribution_coefficient = self.random_token_importance(text)
         if method == 'lime' :
@@ -284,7 +284,7 @@ class BertClassifier(nn.Module):
         if method == 'shap' :
             attribution_coefficient = self.shap_token_importance(text)
         if method == 'integrated_gradient' :
-            attribution_coefficient = self.intergrated_gradient_token_importance(text)
+            attribution_coefficient = self.intergrated_gradient_token_importance(text, base)
         
         #Handling byte pair encoding without ##
         if self.tokenizer.name_or_path == 'camembert-base' :
