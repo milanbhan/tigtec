@@ -163,7 +163,7 @@ class BertClassifier(nn.Module):
         
         ig = LayerIntegratedGradients(ig_forward, layer)
         true_class = np.argmax(self.predict(text))
-        input_ids, base_ids = ig_encodings(self.tokenizer, text)
+        input_ids, base_ids = self.ig_encodings(text)
         attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
@@ -621,7 +621,7 @@ def evaluate(model, val_dataloader, loss_fn = nn.CrossEntropyLoss()):
 
     return val_loss, val_accuracy
 
-def ig_encodings(tokenizer, text):
+def ig_encodings(self, text):
     """Function to process text in order to compute integrated gradient
 
     Args:
@@ -631,10 +631,10 @@ def ig_encodings(tokenizer, text):
     Returns:
         _type_: _description_
     """
-    pad_id = tokenizer.pad_token_id
-    cls_id = tokenizer.cls_token_id
-    sep_id = tokenizer.sep_token_id
-    input_ids = tokenizer.encode(text, add_special_tokens=True)
+    pad_id = self.tokenizer.pad_token_id
+    cls_id = self.tokenizer.cls_token_id
+    sep_id = self.tokenizer.sep_token_id
+    input_ids = self.tokenizer.encode(text, add_special_tokens=True)
     base_ids = [pad_id] * len(input_ids)
     base_ids[0] =  cls_id
     base_ids[-1] = sep_id
