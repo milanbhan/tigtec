@@ -371,7 +371,7 @@ class BertClassifier(nn.Module):
         input = input_ids, mask
         base_ids = input_ids
         for i in range(len(base_ids)):
-            base_ids[i][0] = torch.tensor([pad_id] * len(input_ids[0]))
+            base_ids[i] = torch.tensor([pad_id] * len(input_ids[0]))
             base_ids[i][0] =  cls_id
             base_ids[i][-1] = sep_id
         base = base_ids, mask
