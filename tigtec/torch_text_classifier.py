@@ -174,7 +174,7 @@ class BertClassifier(nn.Module):
             if (t not in [self.tokenizer.cls_token_id, self.tokenizer.pad_token_id, self.tokenizer.sep_token_id]):
                 tokens.append(self.tokenizer.decode(t))
                 ig_token_importance.append(float(scores[0][i]))
-        ig_df=pd.DataFrame({"Token":tokens,"Attribution coefficient":ig_token_importance})
+        ig_df=pd.DataFrame({"token":tokens,"Attribution coefficient":ig_token_importance})
         return(ig_df)
 
     
