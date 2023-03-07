@@ -162,7 +162,7 @@ class BertClassifier(nn.Module):
         #     return(self.bert(inputs["input_ids"], inputs["attention_mask"]).logits)
         
         ig = LayerIntegratedGradients(self.forward, layer)
-        true_class = np.argmax(self.predict(text))
+        true_class = int(np.argmax(self.predict(text)))
         input_ids, base_ids = self.ig_encodings(text)
         attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
