@@ -592,7 +592,7 @@ def boost_cf(cf, n, targets):
             if len(cf.cf_list[i])==0:
                 pass
             else:
-                cf_enhancer.generate_cf(j, target = targets[i], indx_max=500, base=cf.cf_list[i][0])
+                cf_enhancer.generate_cf(j, target = targets[i], indx_max=500, base=[cf.cf_list[i][0]])
     return(cf_enhancer)
             
             
