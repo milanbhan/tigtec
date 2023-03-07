@@ -218,7 +218,7 @@ class tigtec:
         
         return(new_reviews, new_reviews_tokenized, token_max, new_tokens_variety)
     
-    def generate_cf(self, review, target, indx_max = 1000):
+    def generate_cf(self, review, target, indx_max = 1000, base=None):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
         nb_class = init_pred.shape[1]
@@ -238,7 +238,7 @@ class tigtec:
         #   token_list_encoded = [t for t in tokenizer.encode(review[0]) if t not in [101, 102, 103]]
         
         #Initialisation du graph basé sur le text initial
-        attribution_coeff_init = self.classifier.compute_token_importance(text=cf_review, method = method)
+        attribution_coeff_init = self.classifier.compute_token_importance(text=cf_review, method = method, base=base)
         attribution_coeff = attribution_coeff_init.copy()
         text_initial_tokenized = attribution_coeff['token'].tolist()
         #   text_initial_tokenized = [tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
@@ -264,7 +264,7 @@ class tigtec:
                 break
             
             if self.explo_strategy == 'evolutive' :
-                attribution_coeff = self.classifier.compute_token_importance(text=[' '.join(predecessor_text)])
+                attribution_coeff = self.classifier.compute_token_importance(text=[' '.join(predecessor_text)], method = method, base=base)
             
             #On filtre l'attribution en enlevant les tokens déjà masqués/remplacés
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
@@ -571,3 +571,22 @@ class tigtec:
         loss = -(bleu_score + t5_grammar  + diversity)
         
         return(loss)
+    
+    def boost_cf(cf):
+        if len(cf.cf_list==0):
+           raise Exception("No counterfactual already computed. Please first indicate some counterfactual examples")
+        else:
+            cf_enhancer = tigtec(classifier = cf.bert_classifier,
+                mlm = cf.mlm,
+                n = cf.n,
+                attribution = 'cf_token_importance',
+                explo_strategy = 'static',
+                sentence_similarity = cf.sentence_similarity,
+                topk = cf.topk,
+                mask_variety = cf.mask_variety,
+                margin = cf.margin,
+                beam_width = 1,
+                alpha = cf.alpha)
+            
+            
+             
