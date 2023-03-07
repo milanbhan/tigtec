@@ -366,11 +366,15 @@ class BertClassifier(nn.Module):
         pad_id = self.tokenizer.pad_token_id
         cls_id = self.tokenizer.cls_token_id
         sep_id = self.tokenizer.sep_token_id
-        input_ids = self.tokenizer.encode(text, add_special_tokens=True)
+        # input_ids = self.tokenizer.encode(text, add_special_tokens=True)
+        input_ids, mask = preprocessing_for_bert(text, self.tokenizer, self.max_len)
+        input = input_ids, mask
         base_ids = [pad_id] * len(input_ids)
         base_ids[0] =  cls_id
         base_ids[-1] = sep_id
-        return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
+        base = base_ids, mask
+        return(input, base)
+        # return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
     
     def plot_token_importance(self, text, method='attention', n_colors=15) :
           
