@@ -353,6 +353,25 @@ class BertClassifier(nn.Module):
 
         return logits
     
+    def ig_encodings(self, text):
+        """Function to process text in order to compute integrated gradient
+
+        Args:
+            tokenizer (_type_): transformer tokenizer
+            text (_type_): text to explain
+
+        Returns:
+            _type_: _description_
+        """
+        pad_id = self.tokenizer.pad_token_id
+        cls_id = self.tokenizer.cls_token_id
+        sep_id = self.tokenizer.sep_token_id
+        input_ids = self.tokenizer.encode(text, add_special_tokens=True)
+        base_ids = [pad_id] * len(input_ids)
+        base_ids[0] =  cls_id
+        base_ids[-1] = sep_id
+        return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
+    
     def plot_token_importance(self, text, method='attention', n_colors=15) :
           
         token_importance = self.compute_token_importance(text=text, method=method)
@@ -620,26 +639,6 @@ def evaluate(model, val_dataloader, loss_fn = nn.CrossEntropyLoss()):
     val_accuracy = np.mean(val_accuracy)
 
     return val_loss, val_accuracy
-
-def ig_encodings(self, text):
-    """Function to process text in order to compute integrated gradient
-
-    Args:
-        tokenizer (_type_): transformer tokenizer
-        text (_type_): text to explain
-
-    Returns:
-        _type_: _description_
-    """
-    pad_id = self.tokenizer.pad_token_id
-    cls_id = self.tokenizer.cls_token_id
-    sep_id = self.tokenizer.sep_token_id
-    input_ids = self.tokenizer.encode(text, add_special_tokens=True)
-    base_ids = [pad_id] * len(input_ids)
-    base_ids[0] =  cls_id
-    base_ids[-1] = sep_id
-    return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
-
 
 def get_palette(theme="YlOrBr", n_colors=1000):
     pal = sns.color_palette(theme, as_cmap=False, n_colors=n_colors)
