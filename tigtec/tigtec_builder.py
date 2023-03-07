@@ -576,7 +576,7 @@ def boost_cf(cf, n, targets):
     if len(cf.cf_list)==0:
         raise Exception("No counterfactual already computed. Please first indicate some counterfactual examples")
     else:
-        cf_enhancer = tigtec(classifier = cf.bert_classifier,
+        cf_enhancer = tigtec(classifier = cf.classifier,
             mlm = cf.mlm,
             n = n,
             attribution = 'cf_token_importance',
