@@ -161,10 +161,10 @@ class BertClassifier(nn.Module):
         def ig_forward(inputs):
             return(self.bert(inputs["input_ids"], inputs["attention_mask"]).logits)
         
-        ig = LayerIntegratedGradients(self.forward, layer)
+        ig = LayerIntegratedGradients(ig_forward, layer)
         true_class = np.argmax(self.predict(text))
         input_ids, base_ids = ig_encodings(self.tokenizer, text)
-        attrs, delta = ig.attribute(inputs["input_ids"], inputs["attention_mask"], base_ids, target=true_class, return_convergence_delta=True)
+        attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
         return(scores)
