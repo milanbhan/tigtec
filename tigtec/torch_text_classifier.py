@@ -167,7 +167,15 @@ class BertClassifier(nn.Module):
         attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
-        return(scores, input_ids)
+        
+        tokens = []
+        ig_token_importance = []
+        for i,t in enumerate(input_ids[0][0]) :
+            if (t not in [self.tokenizer.cls_token_id, self.tokenizer.pad_token_id, self.tokenizer.sep_token_id]):
+                tokens.append(self.tokenizer.decode(t))
+                ig_token_importance.append(float(scores[0][i]))
+        ig_df=pd.DataFrame({"Token":tokens,"Attribution coefficient":ig_token_importance})
+        return(ig_df)
 
     
     def lime_token_importance(self, text):
@@ -273,6 +281,8 @@ class BertClassifier(nn.Module):
             attribution_coefficient = self.attention_token_importance(text) 
         if method == 'shap' :
             attribution_coefficient = self.shap_token_importance(text)
+        if method == 'integrated_gradient' :
+            attribution_coefficient = self.intergrated_gradient_token_importance(text)
         
         #Handling byte pair encoding without ##
         if self.tokenizer.name_or_path == 'camembert-base' :
