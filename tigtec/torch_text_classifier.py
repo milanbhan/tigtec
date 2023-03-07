@@ -157,7 +157,7 @@ class BertClassifier(nn.Module):
         # attention_mask=torch.tensor(inputs["attention_mask"])
             
         layer = self.bert.embeddings
-        
+        #forward neds to be changed
         def ig_forward(inputs):
             return(self.bert(inputs["input_ids"], inputs["attention_mask"]).logits)
         
