@@ -369,9 +369,11 @@ class BertClassifier(nn.Module):
         # input_ids = self.tokenizer.encode(text, add_special_tokens=True)
         input_ids, mask = preprocessing_for_bert(text, self.tokenizer, self.max_len)
         input = input_ids, mask
-        base_ids = torch.tensor([pad_id] * len(input_ids[0]))
-        base_ids[0] =  cls_id
-        base_ids[-1] = sep_id
+        base_ids = input_ids
+        for i in range(len(base_ids)):
+            base_ids[i][0] = torch.tensor([pad_id] * len(input_ids[0]))
+            base_ids[i][0] =  cls_id
+            base_ids[i][-1] = sep_id
         base = base_ids, mask
         return(input, base)
         # return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
