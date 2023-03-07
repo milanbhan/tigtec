@@ -164,7 +164,7 @@ class BertClassifier(nn.Module):
         ig = LayerIntegratedGradients(self.forward, layer)
         true_class = np.argmax(self.predict(text))
         input_ids, base_ids = self.ig_encodings(text)
-        attrs = ig.attribute(input_ids[0], base_ids[0], target=true_class, return_convergence_delta=False)
+        attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
         return(scores)
