@@ -142,7 +142,7 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
         
-    def intergrated_gradient_token_importance(self, text):
+    def intergrated_gradient_token_importance(self, text, base='pad'):
         # inputs = self.tokenizer.batch_encode_plus(
         #     text,  # Preprocess sentence,
         #     truncation=True,
@@ -163,7 +163,8 @@ class BertClassifier(nn.Module):
         
         ig = LayerIntegratedGradients(self.forward, layer)
         true_class = int(np.argmax(self.predict(text)))
-        input_ids, base_ids = self.ig_encodings(text)
+        
+        input_ids, base_ids = self.ig_encodings(text, base)
         attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
@@ -364,7 +365,7 @@ class BertClassifier(nn.Module):
 
         return logits
     
-    def ig_encodings(self, text):
+    def ig_encodings(self, text, base='pad'):
         """Function to process text in order to compute integrated gradient
 
         Args:
@@ -380,11 +381,15 @@ class BertClassifier(nn.Module):
         # input_ids = self.tokenizer.encode(text, add_special_tokens=True)
         input_ids, mask = preprocessing_for_bert(text, self.tokenizer, self.max_len)
         input = input_ids, mask
-        base_ids = input_ids.clone()
-        for i in range(len(base_ids)):
-            base_ids[i] = torch.tensor([pad_id] * len(input_ids[0]))
-            base_ids[i][0] =  cls_id
-            base_ids[i][-1] = sep_id
+        
+        if base=='pad':
+            base_ids = input_ids.clone()
+            for i in range(len(base_ids)):
+                base_ids[i] = torch.tensor([pad_id] * len(input_ids[0]))
+                base_ids[i][0] =  cls_id
+                base_ids[i][-1] = sep_id 
+        else :
+            base_ids, mask = preprocessing_for_bert(base, self.tokenizer, self.max_len)
         base = base_ids, mask
         return(input, base)
         # return torch.LongTensor([input_ids]), torch.LongTensor([base_ids])
