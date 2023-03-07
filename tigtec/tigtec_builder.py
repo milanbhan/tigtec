@@ -110,6 +110,8 @@ class tigtec:
     def set_cf_list(self, cf_list) :
         self.cf_list = cf_list
         
+    def set_reviews(self, reviews) :
+        self.reviews = reviews
     
     def sentence_transformer_similarity(self, text1, text2, sentence_transformer = None) :
         sentences = text1 + text2
