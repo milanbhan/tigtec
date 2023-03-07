@@ -285,6 +285,9 @@ class BertClassifier(nn.Module):
             attribution_coefficient = self.shap_token_importance(text)
         if method == 'integrated_gradient' :
             attribution_coefficient = self.intergrated_gradient_token_importance(text, base)
+        if method =='cf_token_importance' :
+            attribution_coefficient = self.intergrated_gradient_token_importance(base, text)
+            attribution_coefficient.token = self.random_token_importance(text)['token']
         
         #Handling byte pair encoding without ##
         if self.tokenizer.name_or_path == 'camembert-base' :

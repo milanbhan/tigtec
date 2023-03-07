@@ -572,13 +572,13 @@ class tigtec:
         
         return(loss)
     
-    def boost_cf(cf):
+    def boost_cf(cf, n, targets):
         if len(cf.cf_list==0):
            raise Exception("No counterfactual already computed. Please first indicate some counterfactual examples")
         else:
             cf_enhancer = tigtec(classifier = cf.bert_classifier,
                 mlm = cf.mlm,
-                n = cf.n,
+                n = n,
                 attribution = 'cf_token_importance',
                 explo_strategy = 'static',
                 sentence_similarity = cf.sentence_similarity,
@@ -587,6 +587,13 @@ class tigtec:
                 margin = cf.margin,
                 beam_width = 1,
                 alpha = cf.alpha)
+            
+            for i,j in enumerate(cf.reviews):
+                if len(cf.cf_list[i])==0:
+                    pass
+                else:
+                    cf_enhancer.generate_cf(j, target = targets[i], indx_max=500, base=cf.cf_list[i][0])
+        return(cf_enhancer)
             
             
              
