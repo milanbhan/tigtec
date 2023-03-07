@@ -142,7 +142,7 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
         
-    def intergrated_gradient_token_importance(self, text, base='pad'):
+    def intergrated_gradient_token_importance(self, text, base=None):
         # inputs = self.tokenizer.batch_encode_plus(
         #     text,  # Preprocess sentence,
         #     truncation=True,
@@ -274,7 +274,7 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
     
-    def compute_token_importance(self, text, method:str="attention", base='pad'):
+    def compute_token_importance(self, text, method:str="attention", base=None):
         if method == 'random' :
             attribution_coefficient = self.random_token_importance(text)
         if method == 'lime' :
@@ -365,7 +365,7 @@ class BertClassifier(nn.Module):
 
         return logits
     
-    def ig_encodings(self, text, base='pad'):
+    def ig_encodings(self, text, base=None):
         """Function to process text in order to compute integrated gradient
 
         Args:
@@ -382,7 +382,7 @@ class BertClassifier(nn.Module):
         input_ids, mask = preprocessing_for_bert(text, self.tokenizer, self.max_len)
         input = input_ids, mask
         
-        if base=='pad':
+        if base==None:
             base_ids = input_ids.clone()
             for i in range(len(base_ids)):
                 base_ids[i] = torch.tensor([pad_id] * len(input_ids[0]))
