@@ -167,7 +167,7 @@ class BertClassifier(nn.Module):
         attrs = ig.attribute(input_ids, base_ids, target=true_class, return_convergence_delta=False)
         scores = attrs.sum(dim=-1)
         scores = (scores - scores.mean()) / scores.norm()
-        return(scores)
+        return(scores, input_ids)
 
     
     def lime_token_importance(self, text):
