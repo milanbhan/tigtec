@@ -591,6 +591,7 @@ def boost_cf(cf, n, targets):
             alpha = cf.alpha)
         
         for i,j in enumerate(cf.reviews):
+            print(i)
             if len(cf.cf_list[i])==0:
                 pass
             else:
