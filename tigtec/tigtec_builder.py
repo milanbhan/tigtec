@@ -600,9 +600,8 @@ def boost_cf(cf, n, targets, indx_max):
                 indx_max = len(cf.graph_cf[i].nodes().data()[min_nodes]['hist_mask']) * cf.mask_variety
                 
                 cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]])
-                if len(cf_enhancer.cf_list[i])==0:
-                    for j in cf.cf_list[i]:
-                        cf_enhancer.cf_list[i].append(j)
+                if len(cf_enhancer.cf_list[-1])==0:
+                    cf_enhancer.cf_list[i] = cf.cf_list[i]
     return(cf_enhancer)
             
             
