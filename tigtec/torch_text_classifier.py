@@ -287,7 +287,7 @@ class BertClassifier(nn.Module):
             attribution_coefficient = self.intergrated_gradient_token_importance(text, base)
         if method =='cf_token_importance' :
             attribution_coefficient = self.intergrated_gradient_token_importance(base, text)
-            attribution_coefficient.token = self.random_token_importance(text)['token']
+            
         
         #Handling byte pair encoding without ##
         if self.tokenizer.name_or_path == 'camembert-base' :
@@ -317,6 +317,7 @@ class BertClassifier(nn.Module):
             attribution_coefficient = attribution_coefficient[attribution_coefficient['to_keep']=='yes']
             attribution_coefficient.token = attribution_coefficient.token.str.replace("##", "")
             attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
+        attribution_coefficient.token = self.random_token_importance(text)['token']
         attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
         
         attribution_coefficient['Attribution coefficient'][attribution_coefficient['token'].isin(['.', ',', ';', '!', '?', "'", ":", "’", ";,"])==True]=0
