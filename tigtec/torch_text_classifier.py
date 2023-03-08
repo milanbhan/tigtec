@@ -22,7 +22,7 @@ import seaborn as sns
 import transformers
 from transformers import BertTokenizerFast, DistilBertModel, BertModel, DistilBertTokenizer, DistilBertForMaskedLM, DistilBertConfig, FlaubertTokenizer, FlaubertModel, CamembertTokenizer, CamembertModel, CamembertForMaskedLM, AutoModelForSequenceClassification
 from transformers import AdamW, get_linear_schedule_with_warmup
-
+from nltk.tokenize import WordPunctTokenizer
 
 #PyTorch
 import torch
@@ -291,7 +291,6 @@ class BertClassifier(nn.Module):
         
         #Handling byte pair encoding without ##
         if self.tokenizer.name_or_path == 'camembert-base' :
-            from nltk.tokenize import WordPunctTokenizer
             merged_tokenized = WordPunctTokenizer().tokenize(text[0])
             attribution_coefficient=attribution_coefficient[attribution_coefficient['token']!='']
             attribution_coefficient.reset_index(inplace=True, drop=True)
