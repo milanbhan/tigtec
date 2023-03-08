@@ -317,7 +317,8 @@ class BertClassifier(nn.Module):
             attribution_coefficient = attribution_coefficient[attribution_coefficient['to_keep']=='yes']
             attribution_coefficient.token = attribution_coefficient.token.str.replace("##", "")
             attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
-        attribution_coefficient.token = self.random_token_importance(text)['token']
+        # attribution_coefficient.token = self.random_token_importance(text)['token']
+        attribution_coefficient.token = WordPunctTokenizer().tokenize(text[0])
         attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
         
         attribution_coefficient['Attribution coefficient'][attribution_coefficient['token'].isin(['.', ',', ';', '!', '?', "'", ":", "’", ";,"])==True]=0
