@@ -319,7 +319,21 @@ class BertClassifier(nn.Module):
         # attribution_coefficient.token = self.random_token_importance(text)['token']
         
         attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
-        attribution_coefficient.token = WordPunctTokenizer().tokenize(text[0])
+        
+        
+        if method =='cf_token_importance' :
+            iter = cf.classifier.random_token_importance(text=cf.reviews[40])
+            iter['to_keep']='yes'
+            iter['to_keep'][iter.token.str.startswith("##")]='no'
+            for i in range(iter.shape[0]-1, 0, -1) :
+                if iter.token[i][0:2]=="##" :
+                    iter.token[i-1]+=iter.token[i]
+                    iter['Attribution coefficient'][i-1]+=iter['Attribution coefficient'][i]
+            iter = iter[iter['to_keep']=='yes']
+            iter.token = iter.token.str.replace("##", "")
+            iter = iter[iter['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
+            iter = iter[["token", "Attribution coefficient"]].reset_index(drop=True) 
+            attribution_coefficient.token = iter.token
         
         attribution_coefficient['Attribution coefficient'][attribution_coefficient['token'].isin(['.', ',', ';', '!', '?', "'", ":", "’", ";,"])==True]=0
         
