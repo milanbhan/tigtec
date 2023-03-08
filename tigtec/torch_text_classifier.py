@@ -316,10 +316,8 @@ class BertClassifier(nn.Module):
             attribution_coefficient = attribution_coefficient[attribution_coefficient['to_keep']=='yes']
             attribution_coefficient.token = attribution_coefficient.token.str.replace("##", "")
             attribution_coefficient = attribution_coefficient[attribution_coefficient['token'].isin(['[CLS]', '[SEP]', '[PAD]'])==False]
-        # attribution_coefficient.token = self.random_token_importance(text)['token']
         
         attribution_coefficient = attribution_coefficient[["token", "Attribution coefficient"]].reset_index(drop=True)
-        
         
         if method =='cf_token_importance' :
             iter = self.random_token_importance(text)
