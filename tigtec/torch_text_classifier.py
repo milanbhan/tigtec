@@ -322,7 +322,7 @@ class BertClassifier(nn.Module):
         
         
         if method =='cf_token_importance' :
-            iter = cf.classifier.random_token_importance(text=cf.reviews[40])
+            iter = self.random_token_importance(text)
             iter['to_keep']='yes'
             iter['to_keep'][iter.token.str.startswith("##")]='no'
             for i in range(iter.shape[0]-1, 0, -1) :
