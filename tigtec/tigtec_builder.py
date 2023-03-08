@@ -574,7 +574,7 @@ class tigtec:
         
         return(loss)
     
-def boost_cf(cf, n, targets):
+def boost_cf(cf, n, targets, indx_max):
     if len(cf.cf_list)==0:
         raise Exception("No counterfactual already computed. Please first indicate some counterfactual examples")
     else:
@@ -595,7 +595,7 @@ def boost_cf(cf, n, targets):
             if len(cf.cf_list[i])==0:
                 pass
             else:
-                cf_enhancer.generate_cf(j, target = targets[i], indx_max=20, base=[cf.cf_list[i][0]])
+                cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]])
     return(cf_enhancer)
             
             
