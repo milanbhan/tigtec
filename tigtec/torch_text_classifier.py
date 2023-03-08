@@ -252,7 +252,7 @@ class BertClassifier(nn.Module):
         return(attribution_coefficient)
     
     def shap_token_importance(self, text):
-        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer, self.max_len)[0].tolist()[0] if t not in [101, 102, 103]]
+        token_list_encoded = [t for t in preprocessing_for_bert(text, self.tokenizer, self.max_len)[0].tolist()[0] if t not in [self.tokenizer.cls_token_id, self.tokenizer.pad_token_id, self.tokenizer.sep_token_id]]
         token_list_encoded
         token_list = [self.tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         text_shap = ' '.join(token_list)
