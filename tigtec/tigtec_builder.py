@@ -278,6 +278,7 @@ class tigtec:
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
             #to do : penser au cas de figure avec des attribution égales
             if return_node:
+                nodes_result = [x for x in G_text.nodes() if G_text.nodes.data()[x]['cf']]
                 nb_cf_found = len(nodes_result)
                 ind_to_mask = attribution_iter[attribution_iter['token'].isin([".", ",", ";"])==False].nlargest(self.beam_width + nb_cf_found , 'Attribution coefficient')['token'].index.tolist()[nb_cf_found-1:]
 
