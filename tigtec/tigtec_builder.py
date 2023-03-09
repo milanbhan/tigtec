@@ -601,6 +601,7 @@ def boost_cf(cf, n, targets, indx_max):
                 
                 cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]])
                 if len(cf_enhancer.cf_list[-1])==0:
+                    print(cf.cf_list[i])
                     cf_enhancer.cf_list[-1] = cf.cf_list[i]
     return(cf_enhancer)
             
