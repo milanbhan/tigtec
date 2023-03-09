@@ -604,7 +604,7 @@ def boost_cf(cf, n, targets, indx_max):
         for i,j in enumerate(cf.reviews):
             print(i)
             if len(cf.cf_list[i])==0:
-                pass
+                cf_enhancer.cf_list.append([])
             else:
                 nodes_result = [x for x in cf.graph_cf[i].nodes() if cf.graph_cf[i].nodes.data()[x]['cf']]
                 min_nodes = min(nodes_result)
