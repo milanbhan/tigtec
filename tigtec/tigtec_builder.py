@@ -227,6 +227,7 @@ class tigtec:
         init_state = np.argmax(init_pred)
         target_state = target
         method = self.attribution
+        return_node=False
         # target_state = np.argmin(init_pred)
         init_cost = init_pred[0][target_state]
         if self.sentence_similarity is not None :
@@ -253,14 +254,19 @@ class tigtec:
         #   for depth in range(len(text_initial_tokenized)) :
         nb_cf = 0  
         while (nb_cf < self.n) & (indx <= indx_max) :
-            
-            i = wait_list[0][0]
-            #Si trop long, on abandonne
+            if len(wait_list)==0:
+                predecessor_hist_mask = G_text.nodes.data()[i]['hist_mask']
+                predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
+                predecessor_text = G_text.nodes.data()[i]['text']
+                return_node = True
+            else:
+                i = wait_list[0][0]
+                #Si trop long, on abandonne
 
-            #Récupération historique des tokens masqués et du text du noeud parent
-            predecessor_hist_mask = G_text.nodes.data()[i]['hist_mask']
-            predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
-            predecessor_text = G_text.nodes.data()[i]['text']
+                #Récupération historique des tokens masqués et du text du noeud parent
+                predecessor_hist_mask = G_text.nodes.data()[i]['hist_mask']
+                predecessor_text_masked = G_text.nodes.data()[i]['hist_mask_text']
+                predecessor_text = G_text.nodes.data()[i]['text']
             
             if (len(text_initial_tokenized) == len(predecessor_hist_mask)) :
                 break
@@ -271,7 +277,12 @@ class tigtec:
             #On filtre l'attribution en enlevant les tokens déjà masqués/remplacés
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
             #to do : penser au cas de figure avec des attribution égales
-            ind_to_mask = attribution_iter[attribution_iter['token'].isin([".", ",", ";"])==False].nlargest(self.beam_width, 'Attribution coefficient')['token'].index.tolist()
+            if return_node:
+                nb_cf_found = len(nodes_result)
+                ind_to_mask = attribution_iter[attribution_iter['token'].isin([".", ",", ";"])==False].nlargest(self.beam_width + nb_cf_found , 'Attribution coefficient')['token'].index.tolist()[nb_cf_found-1:]
+
+            else:
+                ind_to_mask = attribution_iter[attribution_iter['token'].isin([".", ",", ";"])==False].nlargest(self.beam_width, 'Attribution coefficient')['token'].index.tolist()
             # print(predecessor_hist_mask)
             # print(wait_list)
             #Pour chaque token à changer, chacun dans un nouveau noeud
