@@ -277,6 +277,7 @@ class tigtec:
             #On filtre l'attribution en enlevant les tokens déjà masqués/remplacés
             attribution_iter = attribution_coeff[attribution_coeff.index.isin(predecessor_hist_mask)==False]
             #to do : penser au cas de figure avec des attribution égales
+            #
             if return_node:
                 nodes_result = [x for x in G_text.nodes() if G_text.nodes.data()[x]['cf']]
                 nb_cf_found = len(nodes_result)
@@ -615,6 +616,9 @@ def boost_cf(cf, n, targets, indx_max):
                 if len(cf_enhancer.cf_list[-1])< len(nodes_result):
                     print(str(i) + " not found or not sufficient")
                     cf_enhancer.cf_list[-1] = cf.cf_list[i]
+                    cf_enhancer.graph_cf[-1] = cf.graph_cf[i]
+                    cf_enhancer.cf_html_list[-1] = cf_enhancer.cf_html_list[i]
+                    
     return(cf_enhancer)
             
             
