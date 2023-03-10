@@ -607,16 +607,18 @@ def boost_cf(cf, n, targets, indx_max):
             print(i)
             if len(cf.cf_list[i])==0:
                 cf_enhancer.cf_list.append([])
+                cf_enhancer.graph_cf.append(cf.graph_cf[i])
+
             else:
                 nodes_result = [x for x in cf.graph_cf[i].nodes() if cf.graph_cf[i].nodes.data()[x]['cf']]
                 min_nodes = min(nodes_result)
                 indx_max = len(cf.graph_cf[i].nodes().data()[min_nodes]['hist_mask']) * cf.mask_variety
                 
                 cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]])
-                if len(cf_enhancer.cf_list[-1])< len(nodes_result):
+                if len(cf_enhancer.cf_list[i])< len(nodes_result):
                     print(str(i) + " not found or not sufficient")
-                    cf_enhancer.cf_list[-1] = cf.cf_list[i]
-                    cf_enhancer.graph_cf[-1] = cf.graph_cf[i]
+                    cf_enhancer.cf_list[i] = cf.cf_list[i]
+                    cf_enhancer.graph_cf[i] = cf.graph_cf[i]
                     # cf_enhancer.cf_html_list[-1] = cf.cf_html_list[i]
                     
     return(cf_enhancer)
