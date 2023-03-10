@@ -617,7 +617,7 @@ def boost_cf(cf, n, targets, indx_max):
                     print(str(i) + " not found or not sufficient")
                     cf_enhancer.cf_list[-1] = cf.cf_list[i]
                     cf_enhancer.graph_cf[-1] = cf.graph_cf[i]
-                    cf_enhancer.cf_html_list[-1] = cf.cf_html_list[i]
+                    # cf_enhancer.cf_html_list[-1] = cf.cf_html_list[i]
                     
     return(cf_enhancer)
             
