@@ -235,8 +235,8 @@ class tigtec:
                 break
             else:
                 delta_loss = self.graph_cf[idx].nodes.data()[l]['cost'] - self.graph_cf[idx].nodes.data()[paths[k-1]]['cost']
-                idx = self.graph_cf[idx].nodes.data()[l]['hist_mask'][-1]
-                loss_importance[idx] = np.abs(delta_loss)
+                id_token = self.graph_cf[idx].nodes.data()[l]['hist_mask'][-1]
+                loss_importance[id_token] = np.abs(delta_loss)
         #Création df output
         tokens = self.graph_cf[idx].nodes.data()[0]['text']
         token_importance = loss_importance
