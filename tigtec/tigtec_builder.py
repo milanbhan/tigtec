@@ -244,7 +244,7 @@ class tigtec:
         return(attribution_coefficient)
 
     
-    def generate_cf(self, review, target, indx_max = 1000, base=None):
+    def generate_cf(self, review, target, indx_max = 1000, base=None, cf=None, idx=None):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
         nb_class = init_pred.shape[1]
@@ -264,9 +264,12 @@ class tigtec:
         #   i=0
         #   token_list_encoded = [t for t in tokenizer.encode(review[0]) if t not in [101, 102, 103]]
         
-        #Initialisation du graph basé sur le text initial
-        attribution_coeff_init = self.classifier.compute_token_importance(text=cf_review, method = method, base=base)
+        #Initialisation du graph basé sur le text initial. Si cf_init autre que None, alors tigtec specific
+
+        attribution_coeff_init = self.classifier.compute_token_importance(text=cf_review, method = method, base=base, cf=cf, idx=idx)
         attribution_coeff = attribution_coeff_init.copy()
+
+            
         text_initial_tokenized = attribution_coeff['token'].tolist()
         #   text_initial_tokenized = [tokenizer.decode(t).replace(" ", "") for t in token_list_encoded]
         G_text = nx.DiGraph()
@@ -611,14 +614,14 @@ class tigtec:
         
         return(loss)
     
-def boost_cf(cf, n, targets, indx_max):
+def boost_cf(cf, n, targets, indx_max, cf_ti_method='cf_token_importance'):
     if len(cf.cf_list)==0:
         raise Exception("No counterfactual already computed. Please first indicate some counterfactual examples")
     else:
         cf_enhancer = tigtec(classifier = cf.classifier,
             mlm = cf.mlm,
             n = n,
-            attribution = 'cf_token_importance',
+            attribution = cf_ti_method,
             explo_strategy = 'static',
             sentence_similarity = cf.sentence_similarity,
             topk = cf.topk,
@@ -638,7 +641,10 @@ def boost_cf(cf, n, targets, indx_max):
                 min_nodes = min(nodes_result)
                 indx_max = len(cf.graph_cf[i].nodes().data()[min_nodes]['hist_mask']) * cf.mask_variety
                 
-                cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]])
+                if cf_ti_method=='cf_token_importance':
+                    cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]])
+                elif cf_ti_method=='tigtec_cf_token_importance':
+                    cf_enhancer.generate_cf(j, target = targets[i], indx_max=indx_max, base=[cf.cf_list[i][0]], cf=cf, idx=i)
                 if len(cf_enhancer.cf_list[i])< len(nodes_result):
                     print(str(i) + " not found or not sufficient")
                     cf_enhancer.cf_list[i] = cf.cf_list[i]

@@ -274,7 +274,30 @@ class BertClassifier(nn.Module):
         
         return(attribution_coefficient)
     
-    def compute_token_importance(self, text, method:str="attention", base=None):
+    def tigtec_cf_token_importance(cf, idx):
+        
+        #correction coût initial trop élevé (à corriger à terme directement dans le code de génération de cf)
+        if cf.graph_cf[idx].nodes.data()[0]['cost']>=1:
+            cf.graph_cf[idx].nodes.data()[0]['cost']= (cf.graph_cf[idx].nodes.data()[0]['cost'] - 1)-cf.alpha
+        #initialisation vecteur de token importance
+        loss_importance = len(cf.graph_cf[idx].nodes.data()[0]['text']) * [0]
+        nodes_result = [x for x in cf.graph_cf[idx].nodes() if cf.graph_cf[idx].nodes.data()[x]['cf']]
+        #reconstitution du chemin entre cf et initial pour décomposer l'évol de la loss
+        paths = list(nx.all_simple_paths(cf.graph_cf[idx], source=0, target=nodes_result[0]))[0]
+        for k, l in reversed(list(enumerate(paths))):
+            if k==0:
+                break
+            else:
+                delta_loss = cf.graph_cf[idx].nodes.data()[l]['cost'] - cf.graph_cf[idx].nodes.data()[paths[k-1]]['cost']
+                id_token = cf.graph_cf[idx].nodes.data()[l]['hist_mask'][-1]
+                loss_importance[id_token] = np.abs(delta_loss)
+        #Création df output
+        tokens = cf.graph_cf[idx].nodes.data()[0]['text']
+        token_importance = loss_importance
+        attribution_coefficient=pd.DataFrame({"token":tokens,"Attribution coefficient":token_importance})
+        return(attribution_coefficient)
+    
+    def compute_token_importance(self, text, method:str="attention", base=None, cf=None, idx=None):
         if method == 'random' :
             attribution_coefficient = self.random_token_importance(text)
         if method == 'lime' :
@@ -287,8 +310,9 @@ class BertClassifier(nn.Module):
             attribution_coefficient = self.intergrated_gradient_token_importance(text, base)
         if method =='cf_token_importance' :
             attribution_coefficient = self.intergrated_gradient_token_importance(base, text)
+        if method =='tigtec_cf_token_importance' :
+            attribution_coefficient = self.tigtec_cf_token_importance(cf, idx)
             
-        
         #Handling byte pair encoding without ##
         if self.tokenizer.name_or_path == 'camembert-base' :
             merged_tokenized = WordPunctTokenizer().tokenize(text[0])
