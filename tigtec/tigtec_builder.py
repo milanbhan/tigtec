@@ -220,6 +220,30 @@ class tigtec:
         
         return(new_reviews, new_reviews_tokenized, token_max, new_tokens_variety)
     
+    def get_tigtec_cf_token_importance(self, idx):
+        
+        #correction coût initial trop élevé (à corriger à terme directement dans le code de génération de cf)
+        if self.graph_cf[idx].nodes.data()[0]['cost']>=1:
+            self.graph_cf[idx].nodes.data()[0]['cost']= (self.graph_cf[idx].nodes.data()[0]['cost'] - 1)-self.alpha
+        #initialisation vecteur de token importance
+        loss_importance = len(self.graph_cf[idx].nodes.data()[0]['text']) * [0]
+        nodes_result = [x for x in self.graph_cf[idx].nodes() if self.graph_cf[idx].nodes.data()[x]['cf']]
+        #reconstitution du chemin entre cf et initial pour décomposer l'évol de la loss
+        paths = list(nx.all_simple_paths(self.graph_cf[idx], source=0, target=nodes_result[0]))[0]
+        for k, l in reversed(list(enumerate(paths))):
+            if k==0:
+                break
+            else:
+                delta_loss = self.graph_cf[idx].nodes.data()[l]['cost'] - self.graph_cf[idx].nodes.data()[paths[k-1]]['cost']
+                idx = self.graph_cf[idx].nodes.data()[l]['hist_mask'][-1]
+                loss_importance[idx] = np.abs(delta_loss)
+        #Création df output
+        tokens = self.graph_cf[idx].nodes.data()[0]['text']
+        token_importance = loss_importance
+        attribution_coefficient=pd.DataFrame({"token":tokens,"Attribution coefficient":token_importance})
+        return(attribution_coefficient)
+
+    
     def generate_cf(self, review, target, indx_max = 1000, base=None):
       #Prédictions text initial
         init_pred = self.classifier.predict(review)
