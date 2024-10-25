@@ -1,12 +1,21 @@
 # Welcome to the project tigtec
-![](docs/assets/banner.png)
 
 - **Project name**: tigtec
 - **Library name**: tigtec
 - **Authors**: milanbhan
-- **Description**: token importance guided text counterfactual
+- **Description**: This is the code implementation for our paper presented at ECML-PKDD 2023:
+  [TIGTEC : Token Importance Guided TExt Counterfactuals](https://dl.acm.org/doi/10.1007/978-3-031-43418-1_30)
 
-
+## Citation
+```
+@inproceedings{tigtec_bhan,
+    title = "TIGTEC: Token Importance Guided TExt Counterfactuals",
+    author = "Bhan, Milan  and Vittaut, Jean-Noel and Chesneau, Nicolas and Lesot, Marie-Jeanne",
+    booktitle = "Machine Learning and Knowledge Discovery in Databases: Research Track: European Conference, ECML PKDD 2023",
+    publisher = "Springer-Verlag",
+    url= "[https://arxiv.org/abs/2402.12038](https://dl.acm.org/doi/10.1007/978-3-031-43418-1_30)",
+}
+```
 
 ## Project Structure
 ```
@@ -21,18 +30,8 @@
 ```
 
 
-## Branch strategy
-TBD
 
-
-## Ethics checklist
-TBD
-
-
-
-## Starter package
-This project has been created using the Ekimetrics Python Starter Package to enforce best coding practices, reusability and industrialization. <br>
-If you have any questions please reach out to the inno team and [Théo Alves Da Costa](mailto:theo.alvesdacosta@ekimetrics.com)
+If you have any questions please reach out to  [Milan Bhan](mailto:milan.bhan@ekimetrics.com)
 
 
 
