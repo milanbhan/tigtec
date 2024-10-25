@@ -1,6 +1,6 @@
 # Welcome to the project tigtec
 
-- **Project name**: tigtec
+- **Project name**: TIGTEC: Token Importance Guided TExt Counterfactuals
 - **Library name**: tigtec
 - **Authors**: milanbhan
 - **Description**: This is the code implementation for our paper presented at ECML-PKDD 2023:
