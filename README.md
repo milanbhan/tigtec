@@ -1,4 +1,4 @@
-# Welcome to the project tigtec
+# Welcome to the TIGTEC project
 
 - **Project name**: TIGTEC: Token Importance Guided TExt Counterfactuals
 - **Library name**: tigtec
