@@ -13,7 +13,7 @@
     author = "Bhan, Milan  and Vittaut, Jean-Noel and Chesneau, Nicolas and Lesot, Marie-Jeanne",
     booktitle = "Machine Learning and Knowledge Discovery in Databases: Research Track: European Conference, ECML PKDD 2023",
     publisher = "Springer-Verlag",
-    url= "[https://arxiv.org/abs/2402.12038](https://dl.acm.org/doi/10.1007/978-3-031-43418-1_30)",
+    url= "https://dl.acm.org/doi/10.1007/978-3-031-43418-1_30",
 }
 ```
 
