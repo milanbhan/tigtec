@@ -17,20 +17,6 @@
 }
 ```
 
-## Project Structure
-```
-- tigtec/ # Your python library
-- data/
-    - raw/
-    - processed/
-- docs/
-- tests/                            # Where goes each unitary test in your folder
-- scripts/                          # Where each automation script will go
-- requirements.txt                  # Where you should put the libraries version used in your library
-```
-
-
-
 If you have any questions please reach out to  [Milan Bhan](mailto:milan.bhan@ekimetrics.com)
 
 
